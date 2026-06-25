@@ -2,18 +2,22 @@
 import { useState } from 'react'
 
 const products = [
-  { num: '01', name: 'TradeSprint', desc: 'A cargo clearance companion helping importers and clearing agents navigate duties, regulations, and multi-agency compliance.', category: 'Logistics', url: 'tradesprint.ng', href: 'https://tradesprint.ng' },
-  { num: '02', name: 'WingWatch', desc: 'A consumer rights platform for air passengers — flight tracker, compensation calculator, delay diary, and a premium claims service.', category: 'Aviation', url: 'wingwatch.ng', href: 'https://wingwatch.ng' },
-  { num: '03', name: 'InsightEx', desc: 'A financial intelligence dashboard covering equities, FX, macro, and fixed income — delivering automated daily market data.', category: 'Fintech', url: 'dashboard.investmentinfohubnigeria.com', href: 'https://dashboard.investmentinfohubnigeria.com' },
-  { num: '04', name: 'Football FanIQ', desc: 'An all-in-one football fan platform with match tracker, VAR decoder, fan wallet, MindScore, and broadcast rights finder across 195 countries.', category: 'Sports', url: 'footballfaniq.com', href: 'https://footballfaniq.com' },
-  { num: '05', name: 'Cloakra', desc: 'An invite-only AI identity protection platform for public figures — voice enrollment, search monitoring, verified statements, takedown infrastructure.', category: 'Identity & Security', url: 'cloakra.com', href: 'https://cloakra.com' },
-  { num: '06', name: 'Sonalia', desc: "Africa's first invite-only luxury membership community for high-achieving women — curated brand partnerships and editorial content.", category: 'Luxury', url: 'sonalia.africa', href: 'https://sonalia.africa' },
-  { num: '07', name: 'Vaulté', desc: 'A private luxury platform connecting authenticated global brands to verified high-net-worth individuals across Africa. Three membership tiers.', category: 'Luxury', url: 'vaulte.africa', href: 'https://vaulte.africa' },
-  { num: '08', name: 'Keeep', desc: 'A fintech PWA for informal economy operators — daily ledger, digital cooperative savings, and a behavioural credit readiness score from 0 to 1000.', category: 'Fintech', url: 'keeep.ng', href: 'https://keeep.ng' },
+  { num: '01', name: 'TradeSprint', desc: 'A cargo clearance companion helping importers and clearing agents navigate duties, regulations, and multi-agency compliance.', category: 'Logistics', url: 'tradesprint.ng', href: 'https://tradesprint.ng', status: '' },
+  { num: '02', name: 'WingWatch', desc: 'A consumer rights platform for air passengers — flight tracker, compensation calculator, delay diary, and a premium claims service.', category: 'Aviation', url: 'wingwatch.ng', href: 'https://wingwatch.ng', status: '' },
+  { num: '03', name: 'InsightEx', desc: 'A financial intelligence dashboard covering equities, FX, macro, and fixed income — delivering automated daily market data.', category: 'Fintech', url: 'dashboard.investmentinfohubnigeria.com', href: 'https://dashboard.investmentinfohubnigeria.com', status: '' },
+  { num: '04', name: 'Football FanIQ', desc: 'An all-in-one football fan platform with match tracker, VAR decoder, fan wallet, MindScore, and broadcast rights finder across 195 countries.', category: 'Sports', url: 'footballfaniq.com', href: 'https://footballfaniq.com', status: '' },
+  { num: '05', name: 'Cloakra', desc: 'An invite-only AI identity protection platform for public figures — voice enrollment, search monitoring, verified statements, takedown infrastructure.', category: 'Identity & Security', url: 'cloakra.com', href: 'https://cloakra.com', status: '' },
+  { num: '06', name: 'Sonalia', desc: "Africa's first invite-only luxury membership community for high-achieving women — curated brand partnerships and editorial content.", category: 'Luxury', url: 'sonalia.africa', href: 'https://sonalia.africa', status: '' },
+  { num: '07', name: 'Vaulté', desc: 'A private luxury platform connecting authenticated global brands to verified high-net-worth individuals across Africa. Three membership tiers.', category: 'Luxury', url: 'vaulte.africa', href: 'https://vaulte.africa', status: 'development' },
+  { num: '08', name: 'Keeep', desc: 'A fintech PWA for informal economy operators — daily ledger, digital cooperative savings, and a behavioural credit readiness score from 0 to 1000.', category: 'Fintech', url: 'keeep.ng', href: 'https://keeep.ng', status: 'development' },
 ]
 
-function PortfolioItem({ p, delay }: { p: typeof products[0]; delay: string }) {
+type Product = typeof products[0]
+
+function PortfolioItem({ p, delay }: { p: Product; delay: string }) {
   const [hovered, setHovered] = useState(false)
+  const isDev = p.status === 'development'
+
   return (
     <a
       href={p.href}
@@ -48,14 +52,27 @@ function PortfolioItem({ p, delay }: { p: typeof products[0]; delay: string }) {
           fontSize: '13px', fontWeight: 300, color: 'var(--secondary)',
           lineHeight: 1.7, marginTop: '8px', display: 'block',
         }}>{p.desc}</span>
+        {isDev && (
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            marginTop: '12px', fontSize: '11px', fontWeight: 500,
+            letterSpacing: '0.1em', textTransform: 'uppercase',
+            color: 'var(--gold)', border: '1px solid var(--gold-dim)',
+            padding: '6px 14px',
+          }}>
+            🛠️ In Development &nbsp;·&nbsp; Join the Waitlist
+          </span>
+        )}
       </div>
       <span style={{
         fontSize: '10px', fontWeight: 500, letterSpacing: '0.22em',
         textTransform: 'uppercase', color: 'var(--tertiary)',
       }} className="pi-cat-cell">{p.category}</span>
-      <span className="pi-url-cell" style={{ fontSize: '12px', fontWeight: 300, letterSpacing: '0.06em', color: 'var(--secondary)' }}>
-        {p.url}
-      </span>
+      <div className="pi-url-cell">
+        <span style={{ fontSize: '12px', fontWeight: 300, letterSpacing: '0.06em', color: 'var(--secondary)', display: 'block' }}>
+          {p.url}
+        </span>
+      </div>
       <span style={{
         position: 'absolute', right: '0', fontSize: '18px', color: 'var(--gold)',
         opacity: hovered ? 1 : 0,
