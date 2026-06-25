@@ -40,3 +40,96 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
 }
+
+/* ─────────────── MOBILE RESPONSIVE ─────────────── */
+
+/* NAV */
+@media (max-width: 768px) {
+  nav { padding: 0 20px !important; }
+  .nav-links-list { gap: 18px !important; }
+  .nav-link-item { font-size: 9px !important; letter-spacing: 0.12em !important; }
+  .nav-logo-text { font-size: 17px !important; margin-right: 8px; }
+  .nav-cta-btn { padding: 7px 14px !important; font-size: 9px !important; letter-spacing: 0.12em !important; }
+}
+
+@media (max-width: 480px) {
+  /* Hide secondary nav links, keep logo + Enquire only */
+  .nav-link-item { display: none !important; }
+  .nav-cta-btn { display: inline-block !important; }
+}
+
+/* SERVICES — stack on mobile */
+@media (max-width: 768px) {
+  .service-row-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    padding: 32px 0 !important;
+    margin: 0 !important;
+  }
+  .service-row-grid .svc-idx { font-size: 22px !important; }
+  .service-row-grid .svc-name { font-size: 24px !important; }
+  .service-row-grid .svc-desc { font-size: 14px !important; }
+}
+
+/* PORTFOLIO — stack on mobile */
+@media (max-width: 768px) {
+  .portfolio-row-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    padding: 32px 0 !important;
+    margin: 0 !important;
+  }
+  .portfolio-row-grid .pi-num-cell { font-size: 13px !important; }
+  .portfolio-row-grid .pi-name-cell { font-size: 26px !important; }
+  .portfolio-row-grid .pi-cat-cell,
+  .portfolio-row-grid .pi-url-cell { font-size: 11px !important; }
+  .portfolio-row-grid .pi-arrow-cell { display: none !important; }
+}
+
+/* ABOUT — stack on mobile */
+@media (max-width: 768px) {
+  .about-grid-wrap {
+    grid-template-columns: 1fr !important;
+    gap: 48px !important;
+  }
+  .about-statement-text {
+    position: static !important;
+    font-size: 24px !important;
+  }
+}
+
+/* PROCESS — stack on mobile */
+@media (max-width: 768px) {
+  .process-step-grid {
+    grid-template-columns: 40px 1fr !important;
+    gap: 20px !important;
+  }
+  .process-step-grid .ps-desc-cell {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* CONTACT — stack on mobile */
+@media (max-width: 768px) {
+  .contact-grid-wrap {
+    grid-template-columns: 1fr !important;
+    gap: 56px !important;
+    padding: 80px 24px !important;
+  }
+}
+
+/* SECTION padding on mobile */
+@media (max-width: 768px) {
+  .section-pad { padding: 80px 24px !important; }
+  .hero-stats-row { gap: 32px !important; }
+}
+
+/* FOOTER on mobile */
+@media (max-width: 768px) {
+  .footer-wrap {
+    flex-direction: column !important;
+    gap: 16px !important;
+    text-align: center !important;
+    padding: 28px 24px !important;
+  }
+}

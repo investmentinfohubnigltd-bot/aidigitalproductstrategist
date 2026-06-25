@@ -73,7 +73,7 @@ export default function Hero() {
         paddingTop: '48px', borderTop: '1px solid var(--rule)',
         flexWrap: 'wrap', justifyContent: 'center',
         ...fade('1.5s'),
-      }}>
+      }} className="hero-stats-row">
         {[
           { n: '8', l: 'Live Products' },
           { n: '4+', l: 'Industries' },

@@ -38,7 +38,7 @@ export default function Contact() {
     <section id="contact" style={{
       background: 'var(--lift)', borderTop: '1px solid var(--rule)',
     }}>
-      <div style={{
+      <div className="contact-grid-wrap" style={{
         maxWidth: '1200px', margin: '0 auto',
         padding: '140px 60px',
         display: 'grid', gridTemplateColumns: '1fr 1fr',

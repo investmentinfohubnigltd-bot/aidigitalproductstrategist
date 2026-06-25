@@ -11,7 +11,7 @@ export default function About() {
   ]
 
   return (
-    <section id="about" style={{
+    <section id="about" className="section-pad" style={{
       padding: '140px 60px', borderTop: '1px solid var(--rule)',
       background: 'var(--lift)',
     }}>
@@ -25,8 +25,8 @@ export default function About() {
           <span style={{ flex: 1, height: '1px', background: 'var(--rule)', maxWidth: '80px' }} />
         </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: '120px', alignItems: 'start' }}>
-          <div className="reveal reveal-d1" style={{
+        <div className="about-grid-wrap" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: '120px', alignItems: 'start' }}>
+          <div className="reveal reveal-d1 about-statement-text" style={{
             fontFamily: "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif",
             fontWeight: 300, fontStyle: 'italic', fontSize: '28px',
             lineHeight: 1.65, color: 'var(--parchment)',

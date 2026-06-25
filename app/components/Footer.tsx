@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer style={{
+    <footer className="footer-wrap" style={{
       background: 'var(--ink)', borderTop: '1px solid var(--rule)',
       padding: '36px 60px', display: 'flex',
       justifyContent: 'space-between', alignItems: 'center',

@@ -25,12 +25,12 @@ export default function Nav() {
         fontWeight: 400, fontSize: '20px', letterSpacing: '0.08em',
         color: 'var(--parchment)', textDecoration: 'none',
       }}>
-        AI<em style={{ fontStyle: 'italic', color: 'var(--gold)' }}>·</em>DS
+        <span className="nav-logo-text">AI<em style={{ fontStyle: 'italic', color: 'var(--gold)' }}>·</em>DS</span>
       </a>
-      <ul style={{ display: 'flex', alignItems: 'center', gap: '44px', listStyle: 'none' }}>
+      <ul className="nav-links-list" style={{ display: 'flex', alignItems: 'center', gap: '44px', listStyle: 'none' }}>
         {['About', 'Services', 'Portfolio', 'Process'].map(item => (
           <li key={item}>
-            <a href={`#${item.toLowerCase()}`} style={{
+            <a className="nav-link-item" href={`#${item.toLowerCase()}`} style={{
               fontSize: '11px', fontWeight: 500, letterSpacing: '0.18em',
               textTransform: 'uppercase', color: 'var(--secondary)',
               textDecoration: 'none', transition: 'color 0.2s',
@@ -41,7 +41,7 @@ export default function Nav() {
           </li>
         ))}
         <li>
-          <a href="#contact" style={{
+          <a className="nav-cta-btn" href="#contact" style={{
             fontSize: '11px', fontWeight: 500, letterSpacing: '0.18em',
             textTransform: 'uppercase', color: 'var(--gold)',
             border: '1px solid var(--gold-dim)', padding: '9px 22px',

@@ -19,7 +19,7 @@ function PortfolioItem({ p, delay }: { p: typeof products[0]; delay: string }) {
       href={p.href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`reveal ${delay}`}
+      className={`reveal portfolio-row-grid ${delay}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -36,14 +36,14 @@ function PortfolioItem({ p, delay }: { p: typeof products[0]; delay: string }) {
       <span style={{
         fontFamily: "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif",
         fontSize: '14px', fontStyle: 'italic', color: 'var(--tertiary)',
-      }}>{p.num}</span>
+      }} className="pi-num-cell">{p.num}</span>
       <div>
         <span style={{
           fontFamily: "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif",
           fontWeight: 400, fontSize: '30px', lineHeight: 1.2, display: 'block',
           color: hovered ? 'var(--gold)' : 'var(--parchment)',
           transition: 'color 0.25s',
-        }}>{p.name}</span>
+        }} className="pi-name-cell">{p.name}</span>
         <span style={{
           fontSize: '13px', fontWeight: 300, color: 'var(--secondary)',
           lineHeight: 1.7, marginTop: '8px', display: 'block',
@@ -52,8 +52,8 @@ function PortfolioItem({ p, delay }: { p: typeof products[0]; delay: string }) {
       <span style={{
         fontSize: '10px', fontWeight: 500, letterSpacing: '0.22em',
         textTransform: 'uppercase', color: 'var(--tertiary)',
-      }}>{p.category}</span>
-      <span style={{ fontSize: '12px', fontWeight: 300, letterSpacing: '0.06em', color: 'var(--secondary)' }}>
+      }} className="pi-cat-cell">{p.category}</span>
+      <span className="pi-url-cell" style={{ fontSize: '12px', fontWeight: 300, letterSpacing: '0.06em', color: 'var(--secondary)' }}>
         {p.url}
       </span>
       <span style={{
@@ -61,14 +61,14 @@ function PortfolioItem({ p, delay }: { p: typeof products[0]; delay: string }) {
         opacity: hovered ? 1 : 0,
         transform: hovered ? 'translateX(0)' : 'translateX(-10px)',
         transition: 'opacity 0.25s, transform 0.25s',
-      }}>→</span>
+      }} className="pi-arrow-cell">→</span>
     </a>
   )
 }
 
 export default function Portfolio() {
   return (
-    <section id="portfolio" style={{
+    <section id="portfolio" className="section-pad" style={{
       padding: '140px 60px', borderTop: '1px solid var(--rule)',
       background: 'var(--lift)',
     }}>

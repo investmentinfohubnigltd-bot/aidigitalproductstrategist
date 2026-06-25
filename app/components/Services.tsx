@@ -12,7 +12,7 @@ function ServiceRow({ s, delay }: { s: typeof services[0]; delay: string }) {
   const [hovered, setHovered] = useState(false)
   return (
     <div
-      className={`reveal ${delay}`}
+      className={`reveal service-row-grid ${delay}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -28,12 +28,12 @@ function ServiceRow({ s, delay }: { s: typeof services[0]; delay: string }) {
       <div style={{
         fontFamily: "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif",
         fontWeight: 300, fontSize: '32px', color: 'var(--tertiary)', fontStyle: 'italic',
-      }}>{s.idx}</div>
+      }} className="svc-idx">{s.idx}</div>
       <div style={{
         fontFamily: "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif",
         fontWeight: 400, fontSize: '26px', color: 'var(--parchment)',
-      }}>{s.name}</div>
-      <div style={{ fontSize: '14px', fontWeight: 300, color: 'var(--secondary)', lineHeight: 1.75 }}>{s.desc}</div>
+      }} className="svc-name">{s.name}</div>
+      <div className="svc-desc" style={{ fontSize: '14px', fontWeight: 300, color: 'var(--secondary)', lineHeight: 1.75 }}>{s.desc}</div>
       <div>
         <a href="#contact" style={{
           fontSize: '10px', fontWeight: 500, letterSpacing: '0.2em',
@@ -48,7 +48,7 @@ function ServiceRow({ s, delay }: { s: typeof services[0]; delay: string }) {
 
 export default function Services() {
   return (
-    <section id="services" style={{
+    <section id="services" className="section-pad" style={{
       padding: '140px 60px', borderTop: '1px solid var(--rule)',
       background: 'var(--ink)',
     }}>

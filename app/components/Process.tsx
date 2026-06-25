@@ -6,7 +6,7 @@ const steps = [
 
 export default function Process() {
   return (
-    <section id="process" style={{
+    <section id="process" className="section-pad" style={{
       padding: '140px 60px', borderTop: '1px solid var(--rule)',
       background: 'var(--ink)',
     }}>
@@ -29,7 +29,7 @@ export default function Process() {
         </h2>
         <div style={{ borderTop: '1px solid var(--rule)' }}>
           {steps.map((s, i) => (
-            <div key={s.num} className={`reveal reveal-d${i + 1}`} style={{
+            <div key={s.num} className={`reveal process-step-grid reveal-d${i + 1}`} style={{
               display: 'grid', gridTemplateColumns: '80px 1fr 1fr',
               gap: '60px', alignItems: 'start',
               padding: '60px 0', borderBottom: '1px solid var(--rule)',
@@ -46,7 +46,7 @@ export default function Process() {
               <div style={{
                 fontSize: '14px', fontWeight: 300, color: 'var(--secondary)',
                 lineHeight: 1.9, paddingTop: '6px',
-              }}>{s.desc}</div>
+              }} className="ps-desc-cell">{s.desc}</div>
             </div>
           ))}
         </div>
