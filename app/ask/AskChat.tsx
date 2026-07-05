@@ -27,7 +27,7 @@ type Plan = {
 const PLANS: Plan[] = [
   { id: 'builder', name: 'Builder', price: '₦10,000', cadence: '/month', note: 'Unlimited mentoring.' },
   { id: 'founder', name: 'Founder', price: '₦25,000', cadence: '/month', note: 'Deeper frameworks, sharper trade-offs.' },
-  { id: 'founding50', name: 'Founding 50', price: '₦7,500', cadence: '/month — for life', note: 'Limited to the first 50 members.' },
+  { id: 'founding50', name: 'Founding 100', price: '₦7,500', cadence: '/month — for life', note: 'Limited to the first 100 members.' },
 ]
 
 const STARTERS = [
@@ -133,6 +133,8 @@ export default function AskChat() {
 
       const hdr = res.headers.get('X-Messages-Remaining')
       if (hdr !== null && hdr !== '') setRemaining(Number(hdr))
+
+      if (res.headers.get('X-Daily-Cap') === '1') track('daily_cap_hit')
 
       // Stream the reply into a fresh assistant bubble.
       setMessages((m) => [...m, { role: 'assistant', content: '' }])

@@ -107,6 +107,9 @@ export async function POST(req: Request) {
           'Content-Type': 'text/plain; charset=utf-8',
           'Cache-Control': 'no-cache, no-transform',
           'X-Messages-Remaining': '',
+          // Marks this 200 as the fair-use cap sign-off (vs a normal model reply)
+          // so the client can fire the daily_cap_hit analytics event.
+          'X-Daily-Cap': '1',
         },
       })
     }
