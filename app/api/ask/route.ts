@@ -8,11 +8,27 @@ import { createServiceClient, getUserFromRequest } from '@/lib/ask-supabase'
 export const runtime = 'nodejs'
 
 const FREE_LIMIT = 5
+// Fair-use cap: paid tiers get up to this many user messages per Africa/Lagos day.
+const DAILY_CAP = 100
+const DAILY_CAP_MESSAGE =
+  "We've covered a lot today — I put a lot into every answer, so I cap our sessions at 100 messages a day. Come back tomorrow and we'll pick it right up."
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string }
 
 function jsonError(error: string, status: number, extra: Record<string, unknown> = {}) {
   return Response.json({ error, ...extra }, { status })
+}
+
+/**
+ * Start of the current Africa/Lagos calendar day, as a UTC ISO string.
+ * Lagos (WAT) is a fixed UTC+1 with no DST, so midnight there is 23:00 UTC the
+ * previous day. We read the Lagos wall-clock date, then subtract the +1h offset.
+ */
+function lagosDayStartUtc(): string {
+  const now = Date.now()
+  const wat = new Date(now + 60 * 60 * 1000) // shift so UTC getters read Lagos wall clock
+  const midnightAsUtc = Date.UTC(wat.getUTCFullYear(), wat.getUTCMonth(), wat.getUTCDate())
+  return new Date(midnightAsUtc - 60 * 60 * 1000).toISOString()
 }
 
 export async function POST(req: Request) {
@@ -60,9 +76,10 @@ export async function POST(req: Request) {
     | 'founder'
     | 'founding50'
 
-  // 4. Enforce the free-tier limit server-side with an atomic increment.
+  // 4. Enforce usage limits server-side, before any model work.
   let messagesRemaining: number | undefined
   if (tier === 'free') {
+    // Free tier: lifetime cap, atomic increment so concurrent requests can't overspend.
     const { data: consumed, error } = await supa.rpc('ask_consume_message', {
       p_user_id: user.id,
       p_limit: FREE_LIMIT,
@@ -72,6 +89,27 @@ export async function POST(req: Request) {
       return jsonError('limit_reached', 402, { tier, messagesRemaining: 0 })
     }
     messagesRemaining = consumed.remaining as number
+  } else {
+    // Paid tiers: fair-use cap of DAILY_CAP user messages per Africa/Lagos day.
+    const { count, error } = await supa
+      .from('ask_messages')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('role', 'user')
+      .gte('created_at', lagosDayStartUtc())
+    if (error) return jsonError('server_error', 500)
+    if ((count ?? 0) >= DAILY_CAP) {
+      // Warm, in-character sign-off — returned as a normal streamed reply so the
+      // client renders it in the Strategist's voice rather than as an error.
+      return new Response(DAILY_CAP_MESSAGE, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'no-cache, no-transform',
+          'X-Messages-Remaining': '',
+        },
+      })
+    }
   }
 
   // 5. Persist the user's message.

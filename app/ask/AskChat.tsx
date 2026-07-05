@@ -603,6 +603,9 @@ function Paywall({ email }: { email: string | null }) {
           </div>
         ))}
       </div>
+      <p style={{ margin: '18px auto 0', maxWidth: 440, textAlign: 'center', fontSize: '12px', lineHeight: 1.6, color: 'var(--tertiary)' }}>
+        Fair use: up to 100 messages per day on all paid plans.
+      </p>
     </div>
   )
 }
