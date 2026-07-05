@@ -1,7 +1,8 @@
 import { createServiceClient, getUserFromRequest } from '@/lib/ask-supabase'
 
 // Payments are not live yet: plan CTAs collect a waitlist entry instead.
-export const runtime = 'edge'
+// Node.js runtime (see app/api/ask/route.ts) — supabase-js isn't Edge-bundleable.
+export const runtime = 'nodejs'
 
 const VALID_PLANS = ['builder', 'founder', 'founding50']
 

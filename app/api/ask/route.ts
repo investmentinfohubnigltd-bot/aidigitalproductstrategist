@@ -2,9 +2,10 @@ import Anthropic from '@anthropic-ai/sdk'
 import { buildSystemPrompt } from '@/lib/strategist-system-prompt'
 import { createServiceClient, getUserFromRequest } from '@/lib/ask-supabase'
 
-// Edge runtime: the Anthropic and Supabase clients are both fetch-based, so this
-// streams from the edge with low time-to-first-token.
-export const runtime = 'edge'
+// Node.js runtime: @supabase/supabase-js transitively references node:fs/node:path,
+// which the Edge bundler rejects. Node serverless streams ReadableStream responses
+// just as well, so streaming (the goal) is unaffected.
+export const runtime = 'nodejs'
 
 const FREE_LIMIT = 5
 
