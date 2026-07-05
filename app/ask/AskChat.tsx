@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { createClient, type Session } from '@supabase/supabase-js'
+import { track } from '@vercel/analytics/react'
 import StrategistAvatar, { type StrategistState } from '@/components/StrategistAvatar'
 
 // Browser client (anon key). Auth only — all data access goes through /api/ask.
@@ -87,6 +88,8 @@ export default function AskChat() {
 
       const current = (await supabase.auth.getSession()).data.session
       if (!current) return // composer is disabled when signed out; guard anyway
+
+      track('message_sent')
 
       const next: Msg[] = [...messages, { role: 'user', content: trimmed }]
       setMessages(next)
@@ -521,7 +524,13 @@ function Paywall({ email }: { email: string | null }) {
   const [joined, setJoined] = useState<string | null>(null)
   const [pending, setPending] = useState<string | null>(null)
 
+  // The Paywall only mounts once the free limit is reached — track that here.
+  useEffect(() => {
+    track('free_limit_hit')
+  }, [])
+
   const join = async (plan: Plan['id']) => {
+    track('waitlist_join', { plan })
     setPending(plan)
     try {
       const {
