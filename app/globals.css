@@ -133,3 +133,14 @@ body {
     padding: 28px 24px !important;
   }
 }
+
+/* NAV — keep "Ask the Strategist" visible in the mobile menu (first position),
+   styled to match the mobile CTA button. Placed after the .nav-link-item hide
+   rule above so this override wins by source order. */
+@media (max-width: 480px) {
+  .nav-ask-item {
+    display: inline-block !important;
+    border: 1px solid var(--gold-dim);
+    padding: 7px 14px !important;
+  }
+}

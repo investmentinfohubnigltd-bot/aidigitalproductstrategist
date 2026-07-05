@@ -30,7 +30,7 @@ export default function Nav() {
       </a>
       <ul className="nav-links-list" style={{ display: 'flex', alignItems: 'center', gap: '44px', listStyle: 'none' }}>
         <li>
-          <Link className="nav-link-item" href="/ask" style={{
+          <Link className="nav-link-item nav-ask-item" href="/ask" style={{
             fontSize: '11px', fontWeight: 500, letterSpacing: '0.18em',
             textTransform: 'uppercase', color: 'var(--gold)',
             textDecoration: 'none', transition: 'color 0.2s',
