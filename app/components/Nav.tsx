@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
@@ -28,6 +29,16 @@ export default function Nav() {
         <span className="nav-logo-text">AI<em style={{ fontStyle: 'italic', color: 'var(--gold)' }}>·</em>DS</span>
       </a>
       <ul className="nav-links-list" style={{ display: 'flex', alignItems: 'center', gap: '44px', listStyle: 'none' }}>
+        <li>
+          <Link className="nav-link-item" href="/ask" style={{
+            fontSize: '11px', fontWeight: 500, letterSpacing: '0.18em',
+            textTransform: 'uppercase', color: 'var(--gold)',
+            textDecoration: 'none', transition: 'color 0.2s',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = 'var(--parchment)')}
+          onMouseLeave={e => (e.currentTarget.style.color = 'var(--gold)')}
+          >Ask the Strategist</Link>
+        </li>
         {['About', 'Services', 'Portfolio', 'Process'].map(item => (
           <li key={item}>
             <a className="nav-link-item" href={`#${item.toLowerCase()}`} style={{
