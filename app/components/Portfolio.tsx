@@ -75,8 +75,14 @@ function CardBody({ p, hovered }: { p: Product; hovered: boolean }) {
       </div>
 
       {/* industry tag · url / live indicator — identical treatment for all 12 */}
+      {/* Top-aligned so the industry tag lines up with the product title.
+          The row is align-items:center, but development cards have a taller
+          middle column (extra badge) with a single-line right column — left
+          centered, the lone tag floats to the row's vertical middle and reads
+          as detached from the title. alignSelf pins it to the top for all 12. */}
       <div className="pi-meta-cell" style={{
         display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', textAlign: 'right',
+        alignSelf: 'flex-start',
       }}>
         <span className="pi-tag-cell" style={{
           fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase',
