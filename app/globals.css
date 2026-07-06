@@ -1,146 +1,216 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap');
+/* ─────────────────────────────────────────────────────────────
+   AI·DS — Design System
+   Dark luxury palette · gold accents · Fraunces display + Inter body
+   Fonts are loaded via next/font (see app/layout.tsx) and exposed as
+   --font-serif / --font-sans.
+   ───────────────────────────────────────────────────────────── */
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; font-size: 16px; }
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  /* room for the fixed nav when jumping to #anchors */
+  scroll-padding-top: 88px;
+  -webkit-text-size-adjust: 100%;
+}
 
 :root {
+  /* Brand tokens */
   --ink:       #1C1A16;
   --parchment: #F2EDE4;
   --gold:      #D4B074;
+  --gold-soft: #E4CA98;
   --gold-dim:  #8A6E3E;
   --lift:      #232019;
   --surface:   #2A261E;
   --rule:      #423C32;
+  --rule-soft: #322D25;
   --secondary: #E0DBD0;
   --tertiary:  #B8B0A2;
+  --warn:      #C97B5C;
+
+  /* Type families */
+  --font-serif: 'Fraunces', 'Cormorant Garamond', 'Palatino Linotype', Georgia, serif;
+  --font-sans:  'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Motion */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 160ms;
+  --t-mid: 220ms;
+
+  /* Rhythm */
+  --gutter: 40px;
+  --section-y: 152px;
+  --container: 1180px;
 }
 
 body {
   background: var(--ink);
   color: var(--parchment);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   font-weight: 300;
   line-height: 1.6;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* REVEAL */
+::selection { background: var(--gold); color: var(--ink); }
+
+/* Accessible, on-brand focus ring everywhere */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* Fraunces display defaults: optical sizing + tighter, richer display feel */
+h1, h2, h3 {
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+  font-weight: 300;
+}
+
+em { font-style: italic; }
+
+/* ── Layout primitives ─────────────────────────────────────── */
+.section {
+  padding: var(--section-y) var(--gutter);
+  border-top: 1px solid var(--rule);
+}
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Small-caps section label — refined tracking */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.eyebrow::after {
+  content: '';
+  height: 1px;
+  width: 72px;
+  background: linear-gradient(90deg, var(--gold-dim), transparent);
+}
+
+/* ── Reveal-on-scroll ──────────────────────────────────────── */
 .reveal {
   opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+  transform: translateY(26px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+  will-change: opacity, transform;
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
-.reveal-d1 { transition-delay: 0.12s; }
-.reveal-d2 { transition-delay: 0.24s; }
-.reveal-d3 { transition-delay: 0.36s; }
-.reveal-d4 { transition-delay: 0.48s; }
+.reveal-d1 { transition-delay: 0.10s; }
+.reveal-d2 { transition-delay: 0.20s; }
+.reveal-d3 { transition-delay: 0.30s; }
+.reveal-d4 { transition-delay: 0.40s; }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1; transform: none; transition: none; }
+  * { scroll-behavior: auto !important; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
 }
 
-/* ─────────────── MOBILE RESPONSIVE ─────────────── */
+/* ─────────────── RESPONSIVE ─────────────── */
 
-/* NAV */
-@media (max-width: 768px) {
-  nav { padding: 0 20px !important; }
-  .nav-links-list { gap: 18px !important; }
-  .nav-link-item { font-size: 9px !important; letter-spacing: 0.12em !important; }
-  .nav-logo-text { font-size: 17px !important; margin-right: 8px; }
-  .nav-cta-btn { padding: 7px 14px !important; font-size: 9px !important; letter-spacing: 0.12em !important; }
+/* Section rhythm scales down cleanly */
+@media (max-width: 900px) {
+  :root { --section-y: 112px; --gutter: 32px; }
 }
-
-@media (max-width: 480px) {
-  /* Hide secondary nav links, keep logo + Enquire only */
-  .nav-link-item { display: none !important; }
-  .nav-cta-btn { display: inline-block !important; }
+@media (max-width: 600px) {
+  :root { --section-y: 88px; --gutter: 22px; }
+  html { scroll-padding-top: 72px; }
 }
 
 /* SERVICES — stack on mobile */
-@media (max-width: 768px) {
+@media (max-width: 820px) {
   .service-row-grid {
     grid-template-columns: 1fr !important;
-    gap: 12px !important;
-    padding: 32px 0 !important;
+    gap: 14px !important;
+    padding: 30px 0 !important;
     margin: 0 !important;
   }
   .service-row-grid .svc-idx { font-size: 22px !important; }
-  .service-row-grid .svc-name { font-size: 24px !important; }
+  .service-row-grid .svc-name { font-size: 26px !important; }
   .service-row-grid .svc-desc { font-size: 14px !important; }
+  .service-row-grid .svc-cta { justify-self: start !important; }
 }
 
-/* PORTFOLIO — stack on mobile */
-@media (max-width: 768px) {
+/* PORTFOLIO — single column on mobile */
+@media (max-width: 820px) {
   .portfolio-row-grid {
     grid-template-columns: 1fr !important;
-    gap: 10px !important;
-    padding: 32px 0 !important;
+    gap: 14px !important;
+    padding: 28px 0 !important;
     margin: 0 !important;
   }
   .portfolio-row-grid .pi-num-cell { font-size: 13px !important; }
-  .portfolio-row-grid .pi-name-cell { font-size: 26px !important; }
-  .portfolio-row-grid .pi-cat-cell,
-  .portfolio-row-grid .pi-url-cell { font-size: 11px !important; }
+  .portfolio-row-grid .pi-name-cell { font-size: 28px !important; }
+  .portfolio-row-grid .pi-meta-cell {
+    align-items: flex-start !important;
+    text-align: left !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 6px 16px !important;
+  }
   .portfolio-row-grid .pi-arrow-cell { display: none !important; }
 }
 
 /* ABOUT — stack on mobile */
-@media (max-width: 768px) {
+@media (max-width: 820px) {
   .about-grid-wrap {
     grid-template-columns: 1fr !important;
-    gap: 48px !important;
+    gap: 44px !important;
   }
   .about-statement-text {
     position: static !important;
-    font-size: 24px !important;
+    font-size: 25px !important;
   }
 }
 
 /* PROCESS — stack on mobile */
-@media (max-width: 768px) {
+@media (max-width: 820px) {
   .process-step-grid {
-    grid-template-columns: 40px 1fr !important;
+    grid-template-columns: 44px 1fr !important;
     gap: 20px !important;
   }
-  .process-step-grid .ps-desc-cell {
-    grid-column: 1 / -1 !important;
-  }
+  .process-step-grid .ps-title-cell { font-size: 26px !important; }
+  .process-step-grid .ps-desc-cell { grid-column: 1 / -1 !important; }
 }
 
 /* CONTACT — stack on mobile */
-@media (max-width: 768px) {
+@media (max-width: 820px) {
   .contact-grid-wrap {
     grid-template-columns: 1fr !important;
-    gap: 56px !important;
-    padding: 80px 24px !important;
+    gap: 52px !important;
   }
 }
 
-/* SECTION padding on mobile */
-@media (max-width: 768px) {
-  .section-pad { padding: 80px 24px !important; }
-  .hero-stats-row { gap: 32px !important; }
+@media (max-width: 600px) {
+  .hero-stats-row { gap: 30px 40px !important; }
 }
 
 /* FOOTER on mobile */
-@media (max-width: 768px) {
+@media (max-width: 720px) {
   .footer-wrap {
     flex-direction: column !important;
-    gap: 16px !important;
+    gap: 18px !important;
     text-align: center !important;
-    padding: 28px 24px !important;
-  }
-}
-
-/* NAV — keep "Ask the Strategist" visible in the mobile menu (first position),
-   styled to match the mobile CTA button. Placed after the .nav-link-item hide
-   rule above so this override wins by source order. */
-@media (max-width: 480px) {
-  .nav-ask-item {
-    display: inline-block !important;
-    border: 1px solid var(--gold-dim);
-    padding: 7px 14px !important;
+    padding: 30px 24px !important;
   }
 }

@@ -1,111 +1,178 @@
 'use client'
 import { useState } from 'react'
+import Link from 'next/link'
 
-const products = [
-  { num: '01', name: 'TradeSprint', desc: 'A cargo clearance companion helping importers and clearing agents navigate duties, regulations, and multi-agency compliance.', category: 'Logistics', url: 'tradesprint.ng', href: 'https://tradesprint.ng', status: '' },
-  { num: '02', name: 'WingWatch', desc: 'A consumer rights platform for air passengers — flight tracker, compensation calculator, delay diary, and a premium claims service.', category: 'Aviation', url: 'wingwatch.ng', href: 'https://wingwatch.ng', status: '' },
-  { num: '03', name: 'InsightEx', desc: 'A financial intelligence dashboard covering equities, FX, macro, and fixed income — delivering automated daily market data.', category: 'Fintech', url: 'dashboard.investmentinfohubnigeria.com', href: 'https://dashboard.investmentinfohubnigeria.com', status: '' },
-  { num: '04', name: 'Football FanIQ', desc: 'An all-in-one football fan platform with match tracker, VAR decoder, fan wallet, MindScore, and broadcast rights finder across 195 countries.', category: 'Sports', url: 'footballfaniq.com', href: 'https://footballfaniq.com', status: '' },
-  { num: '05', name: 'Cloakra', desc: 'An invite-only AI identity protection platform for public figures — voice enrollment, search monitoring, verified statements, takedown infrastructure.', category: 'Identity & Security', url: 'cloakra.com', href: 'https://cloakra.com', status: '' },
-  { num: '06', name: 'Sonalia', desc: "Africa's first invite-only luxury membership community for high-achieving women — curated brand partnerships and editorial content.", category: 'Luxury', url: 'sonalia.africa', href: 'https://sonalia.africa', status: '' },
-  { num: '07', name: 'Vaulté', desc: 'A private luxury platform connecting authenticated global brands to verified high-net-worth individuals across Africa. Three membership tiers.', category: 'Luxury', url: 'vaulte.africa', href: 'https://vaulte.africa', status: 'development' },
-  { num: '08', name: 'Keeep', desc: 'A fintech PWA for informal economy operators — daily ledger, digital cooperative savings, and a behavioural credit readiness score from 0 to 1000.', category: 'Fintech', url: 'keeep.ng', href: 'https://keeep.ng', status: 'development' },
+type Product = {
+  num: string
+  name: string
+  desc: string
+  category: string
+  url?: string
+  href?: string
+  internal?: boolean
+  status?: 'live' | 'development'
+}
+
+// 12 products across 11 industries. Every card carries its industry tag so the
+// claim is substantiated on the page. No invented metrics or URLs.
+const products: Product[] = [
+  { num: '01', name: 'Cloakra', category: 'Identity & Security', url: 'cloakra.com', href: 'https://cloakra.com', status: 'live',
+    desc: 'An invite-only AI identity protection platform for public figures — voice enrollment, search monitoring, verified statements, and takedown infrastructure.' },
+  { num: '02', name: 'WingWatch', category: 'Aviation', url: 'wingwatch.ng', href: 'https://wingwatch.ng', status: 'live',
+    desc: 'A consumer rights platform for air passengers — flight tracker, compensation calculator, delay diary, and a premium claims service.' },
+  { num: '03', name: 'TradeSprint', category: 'Logistics', url: 'tradesprint.ng', href: 'https://tradesprint.ng', status: 'live',
+    desc: 'A cargo clearance companion helping importers and clearing agents navigate duties, regulations, and multi-agency compliance.' },
+  { num: '04', name: 'Football FanIQ', category: 'Sports', url: 'footballfaniq.com', href: 'https://footballfaniq.com', status: 'live',
+    desc: 'An all-in-one football fan platform with match tracker, VAR decoder, fan wallet, MindScore, and broadcast rights finder across 195 countries.' },
+  { num: '05', name: 'Sonalia', category: 'Luxury', url: 'sonalia.africa', href: 'https://sonalia.africa', status: 'live',
+    desc: "Africa's first invite-only luxury membership community for high-achieving women — curated brand partnerships and editorial content." },
+  { num: '06', name: 'InsightEx', category: 'Market Intelligence', url: 'dashboard.investmentinfohubnigeria.com', href: 'https://dashboard.investmentinfohubnigeria.com', status: 'live',
+    desc: 'A financial intelligence dashboard covering equities, FX, macro, and fixed income — delivering automated daily market data.' },
+  { num: '07', name: 'Vaulté', category: 'Luxury', url: 'vaulte.africa', href: 'https://vaulte.africa', status: 'development',
+    desc: 'A private luxury platform connecting authenticated global brands to verified high-net-worth individuals across Africa. Three membership tiers.' },
+  { num: '08', name: 'Keeep', category: 'Fintech', url: 'keeep.ng', href: 'https://keeep.ng', status: 'development',
+    desc: 'A fintech PWA for informal economy operators — daily ledger, digital cooperative savings, and a behavioural credit readiness score from 0 to 1000.' },
+  { num: '09', name: 'ScamProtect', category: 'Consumer Protection', status: 'development',
+    desc: 'A consumer-protection tool that helps everyday people recognise fraudulent messages, fake offers, and financial scams before they part with money or details.' },
+  { num: '10', name: 'LearnedIQ', category: 'Legal Tech', status: 'development',
+    desc: 'A legal-knowledge platform that turns dense statutes and everyday legal questions into plain, practical answers — for people who can’t afford a first consultation.' },
+  { num: '11', name: 'SupplyLensIQ', category: 'Supply Chain', status: 'development',
+    desc: 'A supply-chain intelligence tool giving operators clearer visibility into sourcing, inventory, and the moving parts behind getting goods where they need to be.' },
+  { num: '12', name: 'Ask the Strategist', category: 'AI Mentorship', href: '/ask', internal: true, status: 'live',
+    desc: 'An AI product-strategy mentor trained on my own frameworks and market experience — naira examples, real constraints, and one clear next step. Available now.' },
 ]
 
-type Product = typeof products[0]
-
-function PortfolioItem({ p, delay }: { p: Product; delay: string }) {
-  const [hovered, setHovered] = useState(false)
-  const isDev = p.status === 'development'
-
-  return (
-    <a
-      href={p.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`reveal portfolio-row-grid ${delay}`}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        display: 'grid', gridTemplateColumns: '60px 1fr 180px 160px',
-        gap: '48px', alignItems: 'center',
-        padding: hovered ? '52px 60px' : '52px 0',
-        margin: hovered ? '0 -60px' : '0',
-        borderBottom: '1px solid var(--rule)',
-        textDecoration: 'none',
-        background: hovered ? 'var(--surface)' : 'transparent',
-        transition: 'all 0.2s',
-        position: 'relative',
-      }}>
+function StatusTag({ status }: { status?: Product['status'] }) {
+  if (status === 'development') {
+    return (
       <span style={{
-        fontFamily: "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif",
-        fontSize: '14px', fontStyle: 'italic', color: 'var(--tertiary)',
-      }} className="pi-num-cell">{p.num}</span>
+        display: 'inline-flex', alignItems: 'center', gap: '8px', marginTop: '14px',
+        fontSize: '10px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
+        color: 'var(--gold)', border: '1px solid var(--gold-dim)', padding: '6px 13px',
+      }}>In Development</span>
+    )
+  }
+  return null
+}
+
+function CardInner({ p, hovered }: { p: Product; hovered: boolean }) {
+  const isLive = p.status === 'live'
+  return (
+    <>
+      <span className="pi-num-cell" style={{
+        fontFamily: 'var(--font-serif)', fontSize: '14px', fontStyle: 'italic', color: 'var(--tertiary)',
+      }}>{p.num}</span>
+
       <div>
-        <span style={{
-          fontFamily: "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif",
-          fontWeight: 400, fontSize: '30px', lineHeight: 1.2, display: 'block',
-          color: hovered ? 'var(--gold)' : 'var(--parchment)',
-          transition: 'color 0.25s',
-        }} className="pi-name-cell">{p.name}</span>
+        <span className="pi-name-cell" style={{
+          fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '32px', lineHeight: 1.15,
+          display: 'block', letterSpacing: '-0.01em',
+          color: hovered ? 'var(--gold)' : 'var(--parchment)', transition: 'color var(--t-mid)',
+        }}>{p.name}</span>
         <span style={{
           fontSize: '13px', fontWeight: 300, color: 'var(--secondary)',
-          lineHeight: 1.7, marginTop: '8px', display: 'block',
+          lineHeight: 1.7, marginTop: '10px', display: 'block', maxWidth: '46ch',
         }}>{p.desc}</span>
-        {isDev && (
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: '8px',
-            marginTop: '12px', fontSize: '11px', fontWeight: 500,
-            letterSpacing: '0.1em', textTransform: 'uppercase',
-            color: 'var(--gold)', border: '1px solid var(--gold-dim)',
-            padding: '6px 14px',
-          }}>
-            🛠️ In Development &nbsp;·&nbsp; Join the Waitlist
+        <StatusTag status={p.status} />
+      </div>
+
+      <div className="pi-meta-cell" style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', textAlign: 'right',
+      }}>
+        <span style={{
+          fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold)',
+        }}>{p.category}</span>
+        {p.url && (
+          <span style={{ fontSize: '12px', fontWeight: 300, letterSpacing: '0.04em', color: 'var(--tertiary)' }}>
+            {p.url}
+          </span>
+        )}
+        {isLive && p.internal && (
+          <span style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em', color: 'var(--tertiary)' }}>
+            Live now
           </span>
         )}
       </div>
-      <span style={{
-        fontSize: '10px', fontWeight: 500, letterSpacing: '0.22em',
-        textTransform: 'uppercase', color: 'var(--tertiary)',
-      }} className="pi-cat-cell">{p.category}</span>
-      <div className="pi-url-cell">
-        <span style={{ fontSize: '12px', fontWeight: 300, letterSpacing: '0.06em', color: 'var(--secondary)', display: 'block' }}>
-          {p.url}
-        </span>
-      </div>
-      <span style={{
-        position: 'absolute', right: '0', fontSize: '18px', color: 'var(--gold)',
-        opacity: hovered ? 1 : 0,
-        transform: hovered ? 'translateX(0)' : 'translateX(-10px)',
-        transition: 'opacity 0.25s, transform 0.25s',
-      }} className="pi-arrow-cell">→</span>
-    </a>
+
+      {p.href && (
+        <span className="pi-arrow-cell" aria-hidden style={{
+          position: 'absolute', right: 0, top: '50%', marginTop: '-9px',
+          fontSize: '18px', color: 'var(--gold)',
+          opacity: hovered ? 1 : 0,
+          transform: hovered ? 'translateX(0)' : 'translateX(-8px)',
+          transition: 'opacity var(--t-mid), transform var(--t-mid)',
+        }}>→</span>
+      )}
+    </>
+  )
+}
+
+function PortfolioItem({ p, delay }: { p: Product; delay: string }) {
+  const [hovered, setHovered] = useState(false)
+
+  const base: React.CSSProperties = {
+    display: 'grid', gridTemplateColumns: '54px 1fr 220px', gap: '44px', alignItems: 'center',
+    padding: hovered && p.href ? '46px var(--gutter)' : '46px 0',
+    margin: hovered && p.href ? '0 calc(-1 * var(--gutter))' : '0',
+    borderBottom: '1px solid var(--rule)',
+    background: hovered && p.href ? 'var(--surface)' : 'transparent',
+    transition: 'background var(--t-mid), padding var(--t-mid), margin var(--t-mid)',
+    position: 'relative', textDecoration: 'none',
+  }
+
+  const handlers = {
+    onMouseEnter: () => setHovered(true),
+    onMouseLeave: () => setHovered(false),
+    onFocus: () => setHovered(true),
+    onBlur: () => setHovered(false),
+  }
+
+  const className = `reveal portfolio-row-grid ${delay}`
+
+  if (p.internal && p.href) {
+    return (
+      <Link href={p.href} className={className} style={base} {...handlers}>
+        <CardInner p={p} hovered={hovered} />
+      </Link>
+    )
+  }
+  if (p.href) {
+    return (
+      <a href={p.href} target="_blank" rel="noopener noreferrer" className={className} style={base} {...handlers}>
+        <CardInner p={p} hovered={hovered} />
+      </a>
+    )
+  }
+  return (
+    <div className={className} style={base}>
+      <CardInner p={p} hovered={false} />
+    </div>
   )
 }
 
 export default function Portfolio() {
   return (
-    <section id="portfolio" className="section-pad" style={{
-      padding: '140px 60px', borderTop: '1px solid var(--rule)',
-      background: 'var(--lift)',
-    }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <p className="reveal" style={{
-          fontSize: '10px', fontWeight: 500, letterSpacing: '0.28em',
-          textTransform: 'uppercase', color: 'var(--gold)',
-          marginBottom: '80px', display: 'flex', alignItems: 'center', gap: '20px',
-        }}>
-          Portfolio
-          <span style={{ flex: 1, height: '1px', background: 'var(--rule)', maxWidth: '80px' }} />
-        </p>
+    <section id="portfolio" className="section" style={{ background: 'var(--lift)' }}>
+      <div className="container">
+        <p className="eyebrow reveal" style={{ marginBottom: '48px' }}>Portfolio</p>
+
         <h2 className="reveal" style={{
-          fontFamily: "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif",
-          fontWeight: 300, fontSize: 'clamp(44px, 5.5vw, 72px)',
-          lineHeight: 1.1, letterSpacing: '-0.02em', color: 'var(--parchment)',
-          marginBottom: '80px',
+          fontFamily: 'var(--font-serif)', fontWeight: 300,
+          fontSize: 'clamp(42px, 5.5vw, 74px)', lineHeight: 1.06,
+          letterSpacing: '-0.02em', color: 'var(--parchment)', marginBottom: '28px',
         }}>
-          Eight live products.<br /><em style={{ fontStyle: 'italic', color: 'var(--gold)' }}>All built from scratch.</em>
+          Twelve products.<br />
+          <em style={{ color: 'var(--gold)' }}>Eleven industries.</em>
         </h2>
+
+        <p className="reveal reveal-d1" style={{
+          fontSize: '15px', fontWeight: 300, color: 'var(--secondary)',
+          lineHeight: 1.8, maxWidth: '58ch', marginBottom: '72px',
+        }}>
+          Twelve products developed across eleven industries — each taken from idea to deployment,
+          most solo-operated, all under one studio standard.
+        </p>
+
         <div style={{ borderTop: '1px solid var(--rule)' }}>
           {products.map((p, i) => (
             <PortfolioItem key={p.num} p={p} delay={`reveal-d${(i % 4) + 1}`} />

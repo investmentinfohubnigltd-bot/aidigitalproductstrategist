@@ -27,12 +27,14 @@ export default function Home() {
   return (
     <>
       <Nav />
-      <Hero />
-      <About />
-      <Services />
-      <Portfolio />
-      <Process />
-      <Contact />
+      <main id="main">
+        <Hero />
+        <About />
+        <Services />
+        <Portfolio />
+        <Process />
+        <Contact />
+      </main>
       <Footer />
     </>
   )
