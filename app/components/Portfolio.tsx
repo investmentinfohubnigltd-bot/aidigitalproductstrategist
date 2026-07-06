@@ -79,7 +79,10 @@ function CardBody({ p, hovered }: { p: Product; hovered: boolean }) {
         display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', textAlign: 'right',
       }}>
         <span className="pi-tag-cell" style={{
-          fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold)',
+          fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase',
+          // Literal hex fallback so the gold tag never depends on --gold resolving
+          // (guards against a stale/partial CSS bundle dropping the custom property).
+          color: 'var(--gold, #D4B074)',
         }}>{p.category}</span>
         {p.url ? (
           <span style={{ fontSize: '12px', fontWeight: 300, letterSpacing: '0.04em', color: 'var(--tertiary)' }}>
