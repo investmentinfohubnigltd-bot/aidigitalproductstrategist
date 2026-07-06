@@ -12,7 +12,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
 )
 
-const SERIF = "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif"
+const SERIF = "var(--font-serif)"
 
 type Msg = { role: 'user' | 'assistant'; content: string }
 

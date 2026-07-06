@@ -25,101 +25,92 @@ export default function Contact() {
     }
   }
 
-  const inputStyle = {
+  const inputStyle: React.CSSProperties = {
     width: '100%', background: 'transparent',
     border: 'none', borderBottom: '1px solid var(--rule)',
-    padding: '14px 0', fontSize: '14px', fontWeight: 300,
-    fontFamily: 'Inter, sans-serif', color: 'var(--parchment)',
-    outline: 'none', marginBottom: '32px', display: 'block',
-    transition: 'border-color 0.2s',
+    padding: '14px 0', fontSize: '15px', fontWeight: 300,
+    fontFamily: 'var(--font-sans)', color: 'var(--parchment)',
+    outline: 'none', marginBottom: '30px', display: 'block',
+    transition: 'border-color var(--t-fast)',
+  }
+  const onFieldFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    (e.currentTarget.style.borderBottomColor = 'var(--gold-dim)')
+  const onFieldBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    (e.currentTarget.style.borderBottomColor = 'var(--rule)')
+
+  const labelStyle: React.CSSProperties = {
+    fontSize: '9px', fontWeight: 600, letterSpacing: '0.26em',
+    textTransform: 'uppercase', color: 'var(--tertiary)',
   }
 
   return (
-    <section id="contact" style={{
-      background: 'var(--lift)', borderTop: '1px solid var(--rule)',
-    }}>
-      <div className="contact-grid-wrap" style={{
-        maxWidth: '1200px', margin: '0 auto',
-        padding: '140px 60px',
-        display: 'grid', gridTemplateColumns: '1fr 1fr',
-        gap: '120px', alignItems: 'start',
+    <section id="contact" className="section" style={{ background: 'var(--lift)', padding: 'var(--section-y) 0' }}>
+      <div className="container contact-grid-wrap" style={{
+        padding: '0 var(--gutter)',
+        display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '112px', alignItems: 'start',
       }}>
         {/* Left */}
         <div>
-          <p className="reveal" style={{
-            fontSize: '10px', fontWeight: 500, letterSpacing: '0.28em',
-            textTransform: 'uppercase', color: 'var(--gold)',
-            marginBottom: '48px', display: 'flex', alignItems: 'center', gap: '20px',
-          }}>
-            Let&apos;s work together
-            <span style={{ flex: 1, height: '1px', background: 'var(--rule)', maxWidth: '80px' }} />
-          </p>
+          <p className="eyebrow reveal" style={{ marginBottom: '44px' }}>Let&apos;s work together</p>
 
           <h2 className="reveal" style={{
-            fontFamily: "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif",
-            fontWeight: 300, fontStyle: 'italic',
-            fontSize: 'clamp(44px, 5vw, 68px)',
-            lineHeight: 1.1, color: 'var(--parchment)', marginBottom: '36px',
+            fontFamily: 'var(--font-serif)', fontWeight: 300, fontStyle: 'italic',
+            fontSize: 'clamp(42px, 5vw, 70px)', lineHeight: 1.06,
+            color: 'var(--parchment)', marginBottom: '32px', letterSpacing: '-0.01em',
           }}>
-            Have something<br />worth building?
+            Have something<br />worth developing?
           </h2>
 
           <p className="reveal" style={{
-            fontSize: '14px', fontWeight: 300, color: 'var(--secondary)',
-            lineHeight: 1.9, marginBottom: '52px',
+            fontSize: '15px', fontWeight: 300, color: 'var(--secondary)',
+            lineHeight: 1.85, marginBottom: '48px', maxWidth: '48ch',
           }}>
-            Whether you are building from scratch, scaling something that exists, or trying to figure out where to even start — reach out. I respond to every serious enquiry personally.
+            Whether you are building from scratch, scaling something that exists, or trying to figure
+            out where to even start — reach out. I respond to every serious enquiry personally.
           </p>
 
           <div className="reveal">
             {[
               { label: 'Instagram', value: '@aidigitalproductstrategist' },
               { label: 'Website', value: 'aidigitalproductstrategist.com' },
-            ].map(l => (
+            ].map((l) => (
               <div key={l.label} style={{
                 display: 'flex', alignItems: 'center', gap: '24px',
                 padding: '20px 0', borderBottom: '1px solid var(--rule)',
               }}>
                 <span style={{
-                  fontSize: '9px', fontWeight: 500, letterSpacing: '0.28em',
-                  textTransform: 'uppercase', color: 'var(--tertiary)', minWidth: '80px',
+                  fontSize: '9px', fontWeight: 600, letterSpacing: '0.26em',
+                  textTransform: 'uppercase', color: 'var(--tertiary)', minWidth: '84px',
                 }}>{l.label}</span>
-                <span style={{ fontSize: '14px', fontWeight: 300, color: 'var(--parchment)' }}>
-                  {l.value}
-                </span>
+                <span style={{ fontSize: '14px', fontWeight: 300, color: 'var(--parchment)' }}>{l.value}</span>
               </div>
             ))}
           </div>
 
           {/* Instagram CTA */}
           <div className="reveal" style={{
-            marginTop: '60px', border: '1px solid var(--rule)',
-            padding: '40px', position: 'relative', textAlign: 'center',
+            marginTop: '56px', border: '1px solid var(--rule)', padding: '40px',
+            position: 'relative', textAlign: 'center', background: 'var(--surface)',
           }}>
             <div style={{
-              position: 'absolute', top: '-1px', left: '50%',
-              transform: 'translateX(-50%)', width: '60px',
-              height: '1px', background: 'var(--gold)',
+              position: 'absolute', top: '-1px', left: '50%', transform: 'translateX(-50%)',
+              width: '60px', height: '1px', background: 'var(--gold)',
             }} />
             <span style={{
-              fontSize: '10px', fontWeight: 500, letterSpacing: '0.28em',
-              textTransform: 'uppercase', color: 'var(--gold)',
-              marginBottom: '24px', display: 'block',
+              fontSize: '10px', fontWeight: 600, letterSpacing: '0.26em', textTransform: 'uppercase',
+              color: 'var(--gold)', marginBottom: '24px', display: 'block',
             }}>Fastest way to reach me</span>
             <span style={{
-              fontFamily: "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif",
-              fontWeight: 300, fontStyle: 'italic', fontSize: '28px',
-              color: 'var(--parchment)', lineHeight: 1.25,
-              marginBottom: '28px', display: 'block',
+              fontFamily: 'var(--font-serif)', fontWeight: 300, fontStyle: 'italic', fontSize: '29px',
+              color: 'var(--parchment)', lineHeight: 1.25, marginBottom: '28px', display: 'block',
             }}>Follow the page,<br />then send a message.</span>
             <span style={{
-              fontSize: '11px', fontWeight: 400, letterSpacing: '0.14em',
+              fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em',
               color: 'var(--secondary)', marginBottom: '20px', display: 'block',
             }}>On Instagram, send the word</span>
             <span style={{
-              display: 'inline-block', fontSize: '13px', fontWeight: 600,
-              letterSpacing: '0.28em', textTransform: 'uppercase',
-              color: 'var(--ink)', background: 'var(--gold)', padding: '14px 32px',
+              display: 'inline-block', fontSize: '13px', fontWeight: 600, letterSpacing: '0.26em',
+              textTransform: 'uppercase', color: 'var(--ink)', background: 'var(--gold)', padding: '14px 32px',
             }}>STRATEGY</span>
           </div>
         </div>
@@ -127,61 +118,54 @@ export default function Contact() {
         {/* Right — Email form */}
         <div className="reveal reveal-d2">
           <h3 style={{
-            fontFamily: "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif",
-            fontWeight: 300, fontStyle: 'italic', fontSize: '32px',
-            color: 'var(--parchment)', marginBottom: '48px',
+            fontFamily: 'var(--font-serif)', fontWeight: 300, fontStyle: 'italic', fontSize: '32px',
+            color: 'var(--parchment)', marginBottom: '44px',
           }}>Or send a message directly.</h3>
 
           {status === 'sent' ? (
-            <div style={{
-              border: '1px solid var(--rule)', padding: '48px', textAlign: 'center',
-            }}>
+            <div style={{ border: '1px solid var(--rule)', padding: '48px', textAlign: 'center' }}>
               <p style={{
-                fontFamily: "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif",
-                fontStyle: 'italic', fontSize: '24px', color: 'var(--gold)',
-                marginBottom: '12px',
+                fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '25px',
+                color: 'var(--gold)', marginBottom: '12px',
               }}>Message received.</p>
               <p style={{ fontSize: '14px', color: 'var(--secondary)' }}>
-                I'll be in touch within 24 hours.
+                I&apos;ll be in touch within 24 hours.
               </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
-              <label style={{ fontSize: '9px', letterSpacing: '0.28em', textTransform: 'uppercase', color: 'var(--tertiary)' }}>Name</label>
-              <input
-                type="text" required value={form.name}
-                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                placeholder="Your name"
-                style={{ ...inputStyle } as React.CSSProperties}
-              />
-              <label style={{ fontSize: '9px', letterSpacing: '0.28em', textTransform: 'uppercase', color: 'var(--tertiary)' }}>Email</label>
-              <input
-                type="email" required value={form.email}
-                onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                placeholder="your@email.com"
-                style={{ ...inputStyle } as React.CSSProperties}
-              />
-              <label style={{ fontSize: '9px', letterSpacing: '0.28em', textTransform: 'uppercase', color: 'var(--tertiary)' }}>What are you building?</label>
-              <textarea
-                required rows={6} value={form.message}
-                onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
+              <label htmlFor="c-name" style={labelStyle}>Name</label>
+              <input id="c-name" type="text" required value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                onFocus={onFieldFocus} onBlur={onFieldBlur}
+                placeholder="Your name" style={inputStyle} />
+
+              <label htmlFor="c-email" style={labelStyle}>Email</label>
+              <input id="c-email" type="email" required value={form.email}
+                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                onFocus={onFieldFocus} onBlur={onFieldBlur}
+                placeholder="your@email.com" style={inputStyle} />
+
+              <label htmlFor="c-msg" style={labelStyle}>What are you building?</label>
+              <textarea id="c-msg" required rows={6} value={form.message}
+                onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+                onFocus={onFieldFocus} onBlur={onFieldBlur}
                 placeholder="Tell me about your idea, project, or what you need help with."
-                style={{ ...inputStyle, resize: 'none' } as React.CSSProperties}
-              />
+                style={{ ...inputStyle, resize: 'none' }} />
+
               {status === 'error' && (
-                <p style={{ fontSize: '13px', color: '#C97B5C', marginBottom: '16px' }}>
+                <p style={{ fontSize: '13px', color: 'var(--warn)', marginBottom: '16px' }}>
                   Something went wrong. Please try Instagram instead.
                 </p>
               )}
               <button type="submit" disabled={status === 'sending'} style={{
-                fontFamily: 'Inter, sans-serif', fontSize: '11px', fontWeight: 500,
-                letterSpacing: '0.2em', textTransform: 'uppercase',
+                fontFamily: 'var(--font-sans)', fontSize: '11px', fontWeight: 600,
+                letterSpacing: '0.18em', textTransform: 'uppercase',
                 color: 'var(--ink)', background: 'var(--gold)',
                 padding: '16px 40px', border: 'none', cursor: 'pointer',
-                opacity: status === 'sending' ? 0.6 : 1,
-                transition: 'opacity 0.2s',
+                opacity: status === 'sending' ? 0.6 : 1, transition: 'opacity var(--t-fast), background var(--t-fast)',
               }}>
-                {status === 'sending' ? 'Sending...' : 'Send Message'}
+                {status === 'sending' ? 'Sending…' : 'Send Message'}
               </button>
             </form>
           )}
