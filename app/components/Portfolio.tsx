@@ -10,7 +10,7 @@ type Product = {
   url?: string
   href?: string
   internal?: boolean
-  status?: 'live' | 'development'
+  status: 'live' | 'development'
 }
 
 // 12 products across 11 industries. Every card carries its industry tag so the
@@ -36,60 +36,74 @@ const products: Product[] = [
     desc: 'A consumer-protection tool that helps everyday people recognise fraudulent messages, fake offers, and financial scams before they part with money or details.' },
   { num: '10', name: 'LearnedIQ', category: 'Legal Tech', status: 'development',
     desc: 'A legal-knowledge platform that turns dense statutes and everyday legal questions into plain, practical answers — for people who can’t afford a first consultation.' },
-  { num: '11', name: 'SupplyLensIQ', category: 'Supply Chain', status: 'development',
+  { num: '11', name: 'SupplyLensIQ', category: 'Supply Chain Intelligence', status: 'development',
     desc: 'A supply-chain intelligence tool giving operators clearer visibility into sourcing, inventory, and the moving parts behind getting goods where they need to be.' },
   { num: '12', name: 'Ask the Strategist', category: 'AI Mentorship', href: '/ask', internal: true, status: 'live',
     desc: 'An AI product-strategy mentor trained on my own frameworks and market experience — naira examples, real constraints, and one clear next step. Available now.' },
 ]
 
-function StatusTag({ status }: { status?: Product['status'] }) {
-  if (status === 'development') {
-    return (
-      <span style={{
-        display: 'inline-flex', alignItems: 'center', gap: '8px', marginTop: '14px',
-        fontSize: '10px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
-        color: 'var(--gold)', border: '1px solid var(--gold-dim)', padding: '6px 13px',
-      }}>In Development</span>
-    )
-  }
-  return null
-}
-
-function CardInner({ p, hovered }: { p: Product; hovered: boolean }) {
-  const isLive = p.status === 'live'
+// One card body, rendered identically for every product regardless of link type.
+// Order of slots is fixed for all 12: number · title · description · status badge · industry tag.
+function CardBody({ p, hovered }: { p: Product; hovered: boolean }) {
   return (
     <>
+      {/* number */}
       <span className="pi-num-cell" style={{
         fontFamily: 'var(--font-serif)', fontSize: '14px', fontStyle: 'italic', color: 'var(--tertiary)',
       }}>{p.num}</span>
 
+      {/* title · description · status badge */}
       <div>
         <span className="pi-name-cell" style={{
           fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '32px', lineHeight: 1.15,
           display: 'block', letterSpacing: '-0.01em',
           color: hovered ? 'var(--gold)' : 'var(--parchment)', transition: 'color var(--t-mid)',
         }}>{p.name}</span>
+
         <span style={{
           fontSize: '13px', fontWeight: 300, color: 'var(--secondary)',
           lineHeight: 1.7, marginTop: '10px', display: 'block', maxWidth: '46ch',
         }}>{p.desc}</span>
-        <StatusTag status={p.status} />
+
+        {p.status === 'development' && (
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px', marginTop: '14px',
+            fontSize: '10px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
+            color: 'var(--gold)', border: '1px solid var(--gold-dim)', padding: '6px 13px',
+          }}>In Development</span>
+        )}
       </div>
 
+      {/* industry tag · url / live indicator — identical treatment for all 12 */}
+      {/* Top-aligned so the industry tag lines up with the product title.
+          The row is align-items:center, but development cards have a taller
+          middle column (extra badge) with a single-line right column — left
+          centered, the lone tag floats to the row's vertical middle and reads
+          as detached from the title. alignSelf pins it to the top for all 12. */}
       <div className="pi-meta-cell" style={{
         display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', textAlign: 'right',
+        alignSelf: 'flex-start',
       }}>
-        <span style={{
-          fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gold)',
+        <span className="pi-tag-cell" style={{
+          fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase',
+          // Literal hex fallback so the gold tag never depends on --gold resolving
+          // (guards against a stale/partial CSS bundle dropping the custom property).
+          color: 'var(--gold, #D4B074)',
         }}>{p.category}</span>
-        {p.url && (
+        {p.url ? (
           <span style={{ fontSize: '12px', fontWeight: 300, letterSpacing: '0.04em', color: 'var(--tertiary)' }}>
             {p.url}
           </span>
-        )}
-        {isLive && p.internal && (
+        ) : p.internal ? (
           <span style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em', color: 'var(--tertiary)' }}>
             Live now
+          </span>
+        ) : (
+          // Cards 9–11 have no public URL yet. Plain-text "Coming soon" in the
+          // exact same style as the domain line above, so all 12 cards carry an
+          // identical two-line right column (tag + second line).
+          <span style={{ fontSize: '12px', fontWeight: 300, letterSpacing: '0.04em', color: 'var(--tertiary)' }}>
+            Coming soon
           </span>
         )}
       </div>
@@ -109,15 +123,22 @@ function CardInner({ p, hovered }: { p: Product; hovered: boolean }) {
 
 function PortfolioItem({ p, delay }: { p: Product; delay: string }) {
   const [hovered, setHovered] = useState(false)
+  const interactive = !!p.href
 
-  const base: React.CSSProperties = {
-    display: 'grid', gridTemplateColumns: '54px 1fr 220px', gap: '44px', alignItems: 'center',
-    padding: hovered && p.href ? '46px var(--gutter)' : '46px 0',
-    margin: hovered && p.href ? '0 calc(-1 * var(--gutter))' : '0',
+  // Identical hover treatment on all 12 cards — linked or not: the same lift
+  // (horizontal gutter inset + surface fill), the same gold title highlight
+  // (in CardBody), and the same --t-mid timing. The lift is no longer gated on
+  // `interactive`, so unlinked cards (9–11) animate exactly like linked ones.
+  // Unlinked cards keep cursor:default so they don't pretend to be clickable.
+  const style: React.CSSProperties = {
+    display: 'grid', gridTemplateColumns: '54px 1fr 240px', gap: '44px', alignItems: 'center',
+    padding: hovered ? '46px var(--gutter)' : '46px 0',
+    margin: hovered ? '0 calc(-1 * var(--gutter))' : '0',
     borderBottom: '1px solid var(--rule)',
-    background: hovered && p.href ? 'var(--surface)' : 'transparent',
+    background: hovered ? 'var(--surface)' : 'transparent',
     transition: 'background var(--t-mid), padding var(--t-mid), margin var(--t-mid)',
     position: 'relative', textDecoration: 'none',
+    cursor: interactive ? 'pointer' : 'default',
   }
 
   const handlers = {
@@ -126,26 +147,25 @@ function PortfolioItem({ p, delay }: { p: Product; delay: string }) {
     onFocus: () => setHovered(true),
     onBlur: () => setHovered(false),
   }
-
   const className = `reveal portfolio-row-grid ${delay}`
 
   if (p.internal && p.href) {
     return (
-      <Link href={p.href} className={className} style={base} {...handlers}>
-        <CardInner p={p} hovered={hovered} />
+      <Link href={p.href} className={className} style={style} {...handlers}>
+        <CardBody p={p} hovered={hovered} />
       </Link>
     )
   }
   if (p.href) {
     return (
-      <a href={p.href} target="_blank" rel="noopener noreferrer" className={className} style={base} {...handlers}>
-        <CardInner p={p} hovered={hovered} />
+      <a href={p.href} target="_blank" rel="noopener noreferrer" className={className} style={style} {...handlers}>
+        <CardBody p={p} hovered={hovered} />
       </a>
     )
   }
   return (
-    <div className={className} style={base}>
-      <CardInner p={p} hovered={false} />
+    <div className={className} style={style} {...handlers}>
+      <CardBody p={p} hovered={hovered} />
     </div>
   )
 }
