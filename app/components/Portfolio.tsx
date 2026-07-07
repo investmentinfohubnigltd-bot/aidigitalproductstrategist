@@ -125,14 +125,20 @@ function PortfolioItem({ p, delay }: { p: Product; delay: string }) {
   const [hovered, setHovered] = useState(false)
   const interactive = !!p.href
 
+  // Identical hover treatment on all 12 cards — linked or not: the same lift
+  // (horizontal gutter inset + surface fill), the same gold title highlight
+  // (in CardBody), and the same --t-mid timing. The lift is no longer gated on
+  // `interactive`, so unlinked cards (9–11) animate exactly like linked ones.
+  // Unlinked cards keep cursor:default so they don't pretend to be clickable.
   const style: React.CSSProperties = {
     display: 'grid', gridTemplateColumns: '54px 1fr 240px', gap: '44px', alignItems: 'center',
-    padding: hovered && interactive ? '46px var(--gutter)' : '46px 0',
-    margin: hovered && interactive ? '0 calc(-1 * var(--gutter))' : '0',
+    padding: hovered ? '46px var(--gutter)' : '46px 0',
+    margin: hovered ? '0 calc(-1 * var(--gutter))' : '0',
     borderBottom: '1px solid var(--rule)',
-    background: hovered && interactive ? 'var(--surface)' : 'transparent',
+    background: hovered ? 'var(--surface)' : 'transparent',
     transition: 'background var(--t-mid), padding var(--t-mid), margin var(--t-mid)',
     position: 'relative', textDecoration: 'none',
+    cursor: interactive ? 'pointer' : 'default',
   }
 
   const handlers = {
@@ -158,8 +164,8 @@ function PortfolioItem({ p, delay }: { p: Product; delay: string }) {
     )
   }
   return (
-    <div className={className} style={style}>
-      <CardBody p={p} hovered={false} />
+    <div className={className} style={style} {...handlers}>
+      <CardBody p={p} hovered={hovered} />
     </div>
   )
 }
