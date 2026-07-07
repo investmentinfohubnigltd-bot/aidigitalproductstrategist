@@ -98,7 +98,14 @@ function CardBody({ p, hovered }: { p: Product; hovered: boolean }) {
           <span style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em', color: 'var(--tertiary)' }}>
             Live now
           </span>
-        ) : null}
+        ) : (
+          // Cards 9–11 have no public URL yet. Plain-text "Coming soon" in the
+          // exact same style as the domain line above, so all 12 cards carry an
+          // identical two-line right column (tag + second line).
+          <span style={{ fontSize: '12px', fontWeight: 300, letterSpacing: '0.04em', color: 'var(--tertiary)' }}>
+            Coming soon
+          </span>
+        )}
       </div>
 
       {p.href && (
