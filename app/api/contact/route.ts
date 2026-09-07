@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export async function POST(req: NextRequest) {
   try {
     const { name, email, message } = await req.json()
@@ -10,6 +8,12 @@ export async function POST(req: NextRequest) {
     if (!name || !email || !message) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
     }
+
+    const apiKey = process.env.RESEND_API_KEY
+    if (!apiKey) {
+      return NextResponse.json({ error: 'Contact service unavailable' }, { status: 503 })
+    }
+    const resend = new Resend(apiKey)
 
     await resend.emails.send({
       from: 'AIDS Website <website@aidigitalproductstrategist.com>',

@@ -8,8 +8,8 @@ import StrategistAvatar, { type StrategistState } from '@/components/StrategistA
 
 // Browser client (anon key). Auth only — all data access goes through /api/ask.
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
+  process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://placeholder.supabase.co',
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? 'placeholder-anon-key',
 )
 
 const SERIF = "var(--font-serif)"
