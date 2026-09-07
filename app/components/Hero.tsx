@@ -1,127 +1,30 @@
-'use client'
-import { useEffect, useState } from 'react'
-
-const STATS = [
-  { n: '12', l: 'Products Developed' },
-  { n: '11', l: 'Industries' },
-  { n: '100%', l: 'End-to-End' },
-  { n: '0', l: 'Middlemen' },
-]
+const disciplines = ['Product strategy', 'AI systems', 'Full-stack development', 'Regulated markets']
 
 export default function Hero() {
-  const [loaded, setLoaded] = useState(false)
-  const [reduce, setReduce] = useState(false)
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setReduce(mq.matches)
-    const t = setTimeout(() => setLoaded(true), 80)
-    return () => clearTimeout(t)
-  }, [])
-
-  const fade = (delay: string) =>
-    reduce
-      ? {}
-      : {
-          opacity: loaded ? 1 : 0,
-          transform: loaded ? 'translateY(0)' : 'translateY(22px)',
-          transition: `opacity 0.9s ${delay} var(--ease), transform 0.9s ${delay} var(--ease)`,
-        }
-
   return (
-    <section id="hero" style={{
-      minHeight: '100vh', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-      padding: '132px var(--gutter) 96px', position: 'relative',
-    }}>
-      {/* Subtle gold aura behind the headline — pure CSS, no assets. */}
-      <div aria-hidden style={{
-        position: 'absolute', top: '38%', left: '50%',
-        width: 'min(760px, 90vw)', height: '520px',
-        transform: 'translate(-50%, -50%)',
-        background: 'radial-gradient(ellipse at center, rgba(212,176,116,0.10), transparent 68%)',
-        pointerEvents: 'none', opacity: loaded || reduce ? 1 : 0,
-        transition: 'opacity 1.4s var(--ease)',
-      }} />
-
-      <p className="hero-eyebrow" style={{
-        fontSize: 'clamp(9px, 2.4vw, 11px)', fontWeight: 600, letterSpacing: '0.28em',
-        textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '44px',
-        position: 'relative', width: '100%', maxWidth: '100%',
-        ...fade('0.15s'),
-      }}>
-        AI Product Strategist &amp; Full-Stack Developer
-      </p>
-
-      <h1 style={{
-        fontFamily: 'var(--font-serif)', fontOpticalSizing: 'auto',
-        fontWeight: 300, fontStyle: 'italic',
-        fontSize: 'clamp(34px, 8vw, 116px)',
-        lineHeight: 1.04, letterSpacing: '-0.015em',
-        color: 'var(--parchment)', width: '100%', maxWidth: 'min(15ch, 100%)',
-        position: 'relative', ...fade('0.35s'),
-      }}>
-        The developer who turns your idea into something{' '}
-        <em style={{ color: 'var(--gold)' }}>the world can use.</em>
-      </h1>
-
-      <div style={{
-        width: '1px', height: '64px', background: 'var(--rule)', margin: '56px auto',
-        opacity: loaded || reduce ? 1 : 0, transition: 'opacity 1s 0.9s var(--ease)',
-      }} />
-
-      <p style={{
-        fontSize: '15px', fontWeight: 300, letterSpacing: '0.01em',
-        color: 'var(--secondary)', width: '100%', maxWidth: 'min(540px, 100%)', lineHeight: 1.85,
-        position: 'relative', ...fade('1.0s'),
-      }}>
-        Product strategy, system architecture and end-to-end development for founders and
-        institutions building serious digital products.
-      </p>
-
-      <div style={{
-        display: 'flex', gap: '18px', marginTop: '48px', flexWrap: 'wrap',
-        justifyContent: 'center', position: 'relative', ...fade('1.2s'),
-      }}>
-        <a href="#portfolio" style={{
-          fontFamily: 'var(--font-sans)', fontSize: '11px', fontWeight: 600,
-          letterSpacing: '0.18em', textTransform: 'uppercase',
-          color: 'var(--ink)', background: 'var(--gold)', padding: '15px 36px',
-          textDecoration: 'none', transition: 'background var(--t-fast)',
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--gold-soft)')}
-        onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--gold)')}
-        >View the Work</a>
-        <a href="#contact" style={{
-          fontFamily: 'var(--font-sans)', fontSize: '11px', fontWeight: 600,
-          letterSpacing: '0.18em', textTransform: 'uppercase',
-          color: 'var(--parchment)', border: '1px solid var(--rule)',
-          padding: '15px 36px', textDecoration: 'none',
-          transition: 'border-color var(--t-fast), color var(--t-fast)',
-        }}
-        onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--gold-dim)'; e.currentTarget.style.color = 'var(--gold)' }}
-        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--rule)'; e.currentTarget.style.color = 'var(--parchment)' }}
-        >Start a Conversation</a>
-      </div>
-
-      <div className="hero-stats-row" style={{
-        display: 'flex', gap: '72px', marginTop: '92px', paddingTop: '48px',
-        borderTop: '1px solid var(--rule)', flexWrap: 'wrap',
-        justifyContent: 'center', position: 'relative', ...fade('1.4s'),
-      }}>
-        {STATS.map((s) => (
-          <div key={s.l} style={{ textAlign: 'center' }}>
-            <span style={{
-              fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '54px',
-              color: 'var(--gold)', lineHeight: 1, display: 'block',
-            }}>{s.n}</span>
-            <span style={{
-              fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em',
-              textTransform: 'uppercase', color: 'var(--secondary)',
-              marginTop: '12px', display: 'block',
-            }}>{s.l}</span>
+    <section id="hero" className="hero-v3">
+      <div className="container hero-v3-grid">
+        <div className="hero-v3-main">
+          <p className="kicker"><span>Independent practice</span> Nigeria · Global outlook</p>
+          <h1>Strategy is only valuable when it <em>survives production.</em></h1>
+          <p className="hero-v3-lede">
+            I shape difficult ideas into clear product logic, robust digital systems and working software.
+          </p>
+          <div className="hero-v3-actions">
+            <a href="#portfolio" className="primary-link">Explore selected work <span>↘</span></a>
+            <a href="#contact" className="text-link">Start a conversation <span>→</span></a>
           </div>
-        ))}
+        </div>
+        <aside className="practice-index">
+          <div className="practice-index-head"><span>Practice index</span><span>01—04</span></div>
+          <ol>
+            {disciplines.map((item, index) => <li key={item}><span>0{index + 1}</span><strong>{item}</strong></li>)}
+          </ol>
+          <p>Research-led. Architecture-minded. Built for real operating conditions.</p>
+        </aside>
+      </div>
+      <div className="hero-v3-footer container">
+        <span>From Nigeria to the world</span><span>Scroll to examine the work</span>
       </div>
     </section>
   )
