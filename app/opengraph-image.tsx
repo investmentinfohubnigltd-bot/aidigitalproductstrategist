@@ -27,7 +27,7 @@ export default function OpengraphImage() {
             color: '#F2EDE4',
           }}
         >
-          <span style={{ color: '#C8A96B' }}>AI</span><span style={{ color: '#7E8987', margin: '0 8px' }}>/</span>DPS
+          <span style={{ color: '#5678FF' }}>AI</span><span style={{ color: '#8997AA', margin: '0 8px' }}>/</span>DPS
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -36,7 +36,7 @@ export default function OpengraphImage() {
               fontSize: 34,
               letterSpacing: '0.28em',
               textTransform: 'uppercase',
-              color: '#C8A96B',
+              color: '#8FA5FF',
               marginBottom: 28,
             }}
           >
