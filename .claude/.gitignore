@@ -1,0 +1,6 @@
+# Never commit secrets or local-only settings
+settings.local.json
+*.key
+*_key
+.env
+.nanobanana_key
