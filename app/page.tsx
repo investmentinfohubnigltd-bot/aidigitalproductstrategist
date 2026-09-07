@@ -2,6 +2,7 @@
 import { useEffect } from 'react'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
+import StackSignal from './components/StackSignal'
 import About from './components/About'
 import Services from './components/Services'
 import Portfolio from './components/Portfolio'
@@ -29,6 +30,7 @@ export default function Home() {
       <Nav />
       <main id="main">
         <Hero />
+        <StackSignal />
         <About />
         <Services />
         <Portfolio />
