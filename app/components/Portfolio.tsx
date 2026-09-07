@@ -8,10 +8,10 @@ const signatures = [
     architecture: ['Next.js', 'Vehicle data APIs', 'Paystack', 'Report engine'],
   },
   {
-    number: '02', name: 'VivaVeri', field: 'Institutional identity assurance', href: 'https://vivaveri.com',
-    thesis: 'Let institutions verify life-status signals without becoming a new custodian of sensitive identity data.',
-    system: 'A provider-neutral orchestration, policy and audit layer designed around minimum-necessary signals.',
-    architecture: ['Policy engine', 'Provider orchestration', 'Audit trails', 'Privacy by design'],
+    number: '02', name: 'ClaimLensIQ', field: 'Insurance claims intelligence', href: 'https://claimlensiq.com',
+    thesis: 'Make complex claim review more structured, consistent and auditable without replacing institutional judgement.',
+    system: 'Evidence-led claims intelligence designed to support triage, investigation and consistent institutional review.',
+    architecture: ['Next.js', 'Document intelligence', 'Decision support', 'Audit trails'],
   },
   {
     number: '03', name: 'InsightEx', field: 'Financial information systems', href: 'https://dashboard.investmentinfohubnigeria.com',

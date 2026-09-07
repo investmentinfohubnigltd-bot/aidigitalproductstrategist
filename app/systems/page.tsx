@@ -11,7 +11,7 @@ const systems = [
   ['ScamProtect.ng', 'Consumer protection', 'https://scamprotect.ng', 'Public-interest verification designed to help people examine suspicious offers before acting.'],
   ['Huiyan-NG', 'Trade intelligence', 'https://huiyan-ng.com', 'Nigeria–China landed-cost calculations and import-readiness logic.'],
   ['Football FanIQ', 'Sports technology', 'https://footballfaniq.com', 'A football PWA combining match intelligence, private leagues and practical fan tools.'],
-  ['ClaimLensIQ', 'Insurance technology', 'https://claimlensiq.com', 'Structured claims intelligence designed for consistent institutional review.'],
+  ['VivaVeri', 'Institutional identity assurance', 'https://vivaveri.com', 'A provider-neutral life-status assurance, policy-orchestration and audit system in development.'],
   ['Cloakra', 'Identity protection', 'https://cloakra.com', 'Digital identity-protection infrastructure for public figures and institutions.'],
   ['TradeSprint', 'Trade compliance', 'https://tradesprint.ng', 'A cargo-clearance companion for importers and trade operators.'],
   ['LearnedIQ', 'Legal technology', 'https://learnediq.ng', 'Plain-language legal knowledge organised around practical everyday questions.'],
