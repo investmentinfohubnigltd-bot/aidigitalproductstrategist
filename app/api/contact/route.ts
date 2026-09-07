@@ -10,9 +10,7 @@ export async function POST(req: NextRequest) {
     }
 
     const apiKey = process.env.RESEND_API_KEY
-    if (!apiKey) {
-      return NextResponse.json({ error: 'Contact service unavailable' }, { status: 503 })
-    }
+    if (!apiKey) return NextResponse.json({ error: 'Contact service unavailable' }, { status: 503 })
     const resend = new Resend(apiKey)
 
     await resend.emails.send({

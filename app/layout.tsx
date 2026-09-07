@@ -20,18 +20,16 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'AI Digital Product Strategist | Product Strategy & Technical Execution',
-    template: '%s | AI Digital Product Strategist',
+    default: 'AI Digital Product Strategist — Strategy · Architecture · Development',
+    template: '%s · AI Digital Product Strategist',
   },
   description:
-    'AI product strategy, system architecture and full-stack technical execution for useful digital products in complex and regulated markets.',
+    'AI product strategy, system architecture and end-to-end development for useful digital products across African and global markets.',
   keywords: [
     'digital product strategist',
     'product development',
-    'AI product development',
-    'system architecture',
-    'full-stack development',
-    'RegTech',
+    'brand strategy',
+    'MVP development',
     'Nigeria',
     'Africa',
   ],
@@ -39,7 +37,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'AI Digital Product Strategist',
     description:
-      'AI product strategy, system architecture and full-stack execution for useful digital products.',
+      'End-to-end product development, brand strategy, and content systems — 12 products across 11 industries.',
     url: 'https://aidigitalproductstrategist.com',
     siteName: 'AI Digital Product Strategist',
     type: 'website',
@@ -49,7 +47,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'AI Digital Product Strategist',
     description:
-      'AI product strategy, system architecture and full-stack execution for useful digital products.',
+      'End-to-end product development, brand strategy, and content systems — 12 products across 11 industries.',
   },
   metadataBase: new URL('https://aidigitalproductstrategist.com'),
   alternates: { canonical: '/' },
