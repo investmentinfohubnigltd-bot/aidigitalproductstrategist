@@ -11,7 +11,7 @@ export default function About() {
       <div className="container">
         <div className="editorial-heading">
           <p className="section-mark">01 / Approach</p>
-          <h2>I do not separate the product decision from the technical decision.</h2>
+          <h2>Product decisions and technical decisions belong in the same room.</h2>
           <p className="editorial-intro">The strongest products emerge when market understanding, business logic, user experience and engineering are treated as one continuous discipline.</p>
         </div>
         <div className="capability-list">

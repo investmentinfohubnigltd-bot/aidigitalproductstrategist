@@ -1,11 +1,10 @@
 import { ImageResponse } from 'next/og'
 
-export const alt =
-  'AI Digital Product Strategist — 12 products across 11 industries, developed end to end'
+export const alt = 'ADPS — Independent AI product strategy and systems practice'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
-// On-brand social card: dark luxury ground, gold accents, AI·DS mark.
+// On-brand social card: dark luxury ground, gold accents, ADPS mark.
 export default function OpengraphImage() {
   return new ImageResponse(
     (
@@ -29,7 +28,7 @@ export default function OpengraphImage() {
             color: '#F2EDE4',
           }}
         >
-          AI<span style={{ color: '#D4B074', margin: '0 4px' }}>·</span>DS
+          <span style={{ color: '#D4B074' }}>[</span>ADPS<span style={{ color: '#D4B074' }}>]</span>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -42,7 +41,7 @@ export default function OpengraphImage() {
               marginBottom: 28,
             }}
           >
-            Digital Product Strategist
+            Independent product practice
           </div>
           <div
             style={{
@@ -53,7 +52,7 @@ export default function OpengraphImage() {
               maxWidth: 900,
             }}
           >
-            The developer who turns your idea into something the world can use.
+            Strategy that survives production.
           </div>
         </div>
 
@@ -65,7 +64,7 @@ export default function OpengraphImage() {
             letterSpacing: '0.02em',
           }}
         >
-          12 products across 11 industries · developed end to end
+          Product strategy · AI · architecture · full-stack systems
         </div>
       </div>
     ),

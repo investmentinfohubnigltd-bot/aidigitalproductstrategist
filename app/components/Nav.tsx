@@ -19,11 +19,11 @@ export default function Nav() {
   return (
     <header className={`nav-v3-wrap ${scrolled ? 'scrolled' : ''}`}>
       <nav className="container nav-v3" aria-label="Primary navigation">
-        <a href="#hero" className="v3-brand" aria-label="AI Digital Product Strategist home">AI<span>·</span>DS</a>
+        <a href="#hero" className="v3-brand" aria-label="ADPS home"><span className="brand-bracket">[</span>ADPS<span className="brand-bracket">]</span></a>
         <div className={`nav-v3-links ${open ? 'open' : ''}`}>
           <a href="#about" onClick={() => setOpen(false)}>Approach</a>
           <a href="#services" onClick={() => setOpen(false)}>Capabilities</a>
-          <a href="#portfolio" onClick={() => setOpen(false)}>Work</a>
+          <a href="#portfolio" onClick={() => setOpen(false)}>Signature work</a>
           <a href="#process" onClick={() => setOpen(false)}>Method</a>
           <Link href="/ask" onClick={() => setOpen(false)}>Ask the Strategist</Link>
           <a href="#contact" className="nav-enquire" onClick={() => setOpen(false)}>Enquire <span>↗</span></a>

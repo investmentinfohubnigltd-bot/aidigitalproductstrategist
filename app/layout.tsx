@@ -20,8 +20,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'AI Digital Product Strategist — Strategy · Architecture · Development',
-    template: '%s · AI Digital Product Strategist',
+    default: 'ADPS — AI Digital Product Strategist',
+    template: '%s · ADPS',
   },
   description:
     'AI product strategy, system architecture and end-to-end development for useful digital products across African and global markets.',
@@ -35,19 +35,19 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'AI Digital Product Strategist' }],
   openGraph: {
-    title: 'AI Digital Product Strategist',
+    title: 'ADPS — AI Digital Product Strategist',
     description:
-      'End-to-end product development, brand strategy, and content systems — 12 products across 11 industries.',
+      'An independent product practice combining strategy, system architecture, AI and full-stack execution.',
     url: 'https://aidigitalproductstrategist.com',
-    siteName: 'AI Digital Product Strategist',
+    siteName: 'ADPS',
     type: 'website',
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AI Digital Product Strategist',
+    title: 'ADPS — AI Digital Product Strategist',
     description:
-      'End-to-end product development, brand strategy, and content systems — 12 products across 11 industries.',
+      'An independent product practice combining strategy, system architecture, AI and full-stack execution.',
   },
   metadataBase: new URL('https://aidigitalproductstrategist.com'),
   alternates: { canonical: '/' },

@@ -1,18 +1,24 @@
 import Link from 'next/link'
 
-const products = [
-  ['CheckVIN.ng', 'Automotive intelligence', 'https://checkvin.ng', 'LIVE', 'VIN decoding, import-age eligibility and paid import-status reporting for vehicle buyers.'],
-  ['VivaVeri', 'Identity assurance', 'https://vivaveri.com', 'SYSTEM', 'Provider-neutral life-status assurance, policy orchestration and auditable institutional controls.'],
-  ['WingWatch', 'Aviation consumer rights', 'https://wingwatch.ng', 'LIVE', 'Flight disruption intelligence, evidence capture and claims-support journeys.'],
-  ['ScamProtect.ng', 'Consumer protection', 'https://scamprotect.ng', 'LIVE', 'A public-interest verification platform helping people check suspicious offers before acting.'],
-  ['InsightEx', 'Financial intelligence', 'https://dashboard.investmentinfohubnigeria.com', 'LIVE', 'Education-first intelligence across Nigerian equities, FX, macro and fixed income.'],
-  ['Huiyan-NG', 'Trade intelligence', 'https://huiyan-ng.com', 'LIVE', 'Nigeria-China landed-cost calculations and import-readiness logic.'],
-  ['Football FanIQ', 'Sports technology', 'https://footballfaniq.com', 'LIVE', 'A football PWA combining match intelligence, private leagues and fan tools.'],
-  ['ClaimLensIQ', 'Insurance technology', 'https://claimlensiq.com', 'PILOT', 'Structured claims intelligence designed for consistent institutional review.'],
-  ['Cloakra', 'Identity protection', 'https://cloakra.com', 'SYSTEM', 'Digital identity-protection infrastructure for public figures and institutions.'],
-  ['TradeSprint', 'Trade compliance', 'https://tradesprint.ng', 'LIVE', 'A cargo-clearance companion for importers and trade operators.'],
-  ['LearnedIQ', 'Legal technology', 'https://learnediq.ng', 'SYSTEM', 'Plain-language legal knowledge designed around practical everyday questions.'],
-  ['Ask the Strategist', 'AI product mentorship', '/ask', 'LIVE', 'An AI mentor built around original product frameworks and African market realities.'],
+const signatures = [
+  {
+    number: '01', name: 'CheckVIN.ng', field: 'Automotive intelligence', href: 'https://checkvin.ng',
+    thesis: 'Make an opaque vehicle decision legible before money changes hands.',
+    system: 'VIN intelligence, import-age eligibility and paid import-status reporting in one focused buyer journey.',
+    architecture: ['Next.js', 'Vehicle data APIs', 'Paystack', 'Report engine'],
+  },
+  {
+    number: '02', name: 'VivaVeri', field: 'Institutional identity assurance', href: 'https://vivaveri.com',
+    thesis: 'Let institutions verify life-status signals without becoming a new custodian of sensitive identity data.',
+    system: 'A provider-neutral orchestration, policy and audit layer designed around minimum-necessary signals.',
+    architecture: ['Policy engine', 'Provider orchestration', 'Audit trails', 'Privacy by design'],
+  },
+  {
+    number: '03', name: 'InsightEx', field: 'Financial information systems', href: 'https://dashboard.investmentinfohubnigeria.com',
+    thesis: 'Turn fragmented market information into a structured educational intelligence experience.',
+    system: 'Source-led coverage across Nigerian equities, FX, macroeconomic indicators and fixed income.',
+    architecture: ['Data pipelines', 'Source controls', 'Analytics', 'Information UX'],
+  },
 ]
 
 export default function Portfolio() {
@@ -20,15 +26,31 @@ export default function Portfolio() {
     <section id="portfolio" className="section-v3 section-portfolio">
       <div className="container">
         <div className="editorial-heading portfolio-heading">
-          <p className="section-mark">03 / Selected systems</p>
-          <h2>Proof of thinking, expressed as working products.</h2>
-          <p className="editorial-intro">Selected systems across consumer, enterprise and regulated-market contexts.</p>
+          <p className="section-mark">03 / Signature work</p>
+          <h2>Three systems. Three difficult problems made operational.</h2>
+          <p className="editorial-intro">A focused view of the product judgement, architecture and execution behind the practice.</p>
         </div>
-        <div className="portfolio-v3">
-          {products.map(([name, sector, href, status, description], index) => {
-            const content = <><header><span>{String(index + 1).padStart(2, '0')}</span><b>{status}</b></header><small>{sector}</small><h3>{name}</h3><p>{description}</p><footer>Examine product <span>↗</span></footer></>
-            return href.startsWith('/') ? <Link href={href} key={name}>{content}</Link> : <a href={href} target="_blank" rel="noopener noreferrer" key={name}>{content}</a>
-          })}
+
+        <div className="signature-list">
+          {signatures.map((item) => (
+            <article className="signature-case" key={item.name}>
+              <header className="signature-index"><span>{item.number}</span><small>CASE / {item.field}</small></header>
+              <div className="signature-title">
+                <h3>{item.name}</h3>
+                <a href={item.href} target="_blank" rel="noopener noreferrer" aria-label={`Open ${item.name}`}>View live system <span>↗</span></a>
+              </div>
+              <div className="signature-detail">
+                <div><small>PRODUCT THESIS</small><p>{item.thesis}</p></div>
+                <div><small>SYSTEM RESPONSE</small><p>{item.system}</p></div>
+                <div className="architecture-tags"><small>TECHNICAL SURFACE</small><ul>{item.architecture.map((layer) => <li key={layer}>{layer}</li>)}</ul></div>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="archive-cta">
+          <div><span>BEYOND THE SIGNATURE THREE</span><p>Additional work across aviation, consumer protection, trade, insurance, sport and legal technology.</p></div>
+          <Link href="/systems">Open systems archive <span>→</span></Link>
         </div>
       </div>
     </section>

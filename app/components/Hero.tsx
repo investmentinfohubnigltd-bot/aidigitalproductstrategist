@@ -9,9 +9,9 @@ export default function Hero() {
       <div className="hero-grid-lines" aria-hidden />
       <div className="container hero-v3-grid">
         <div className="hero-v3-main">
-          <p className="kicker"><span>Independent practice</span> Nigeria · Global outlook</p>
+          <p className="kicker"><span>ADPS / Independent practice</span> Nigeria · Global outlook</p>
           <h1>Strategy is only valuable when it <em>survives production.</em></h1>
-          <p className="hero-v3-lede">I shape difficult ideas into clear product logic, robust digital systems and working software.</p>
+          <p className="hero-v3-lede">AI Digital Product Strategist is an independent practice shaping difficult ideas into clear product logic, robust digital systems and working software.</p>
           <div className="hero-v3-actions">
             <a href="#portfolio" className="primary-link">Explore selected work <span>↘</span></a>
             <a href="#contact" className="text-link">Start a conversation <span>→</span></a>
@@ -40,7 +40,7 @@ export default function Hero() {
           </div>
         </aside>
       </div>
-      <div className="hero-v3-footer container"><span>From Nigeria to the world</span><span>Product strategy · AI · full-stack systems</span></div>
+      <div className="hero-v3-footer container"><span>ADPS / From Nigeria to the world</span><span>Product strategy · AI · full-stack systems</span></div>
     </section>
   )
 }
