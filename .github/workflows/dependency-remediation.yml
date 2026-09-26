@@ -1,0 +1,37 @@
+name: Dependency Remediation Helper
+on:
+  push:
+    branches: [aurum-standard-v2-baseline]
+    paths:
+      - ".github/workflows/dependency-remediation.yml"
+permissions:
+  contents: write
+jobs:
+  remediate:
+    if: github.event.head_commit.message != 'Remove dependency remediation helper'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: aurum-standard-v2-baseline
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Apply dependency remediation
+        run: npm install next@16.3.6 eslint-config-next@16.3.6 --save-exact && npm audit fix
+      - name: Verify remediated tree
+        run: npx tsc --noEmit && npm run lint && npm run build && npm audit --audit-level=high
+      - name: Commit lockfile remediation
+        run: |
+          if git diff --quiet -- package.json package-lock.json; then
+            echo "No dependency changes generated"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "chore: remediate high-severity dependencies"
+          git push origin HEAD:aurum-standard-v2-baseline
