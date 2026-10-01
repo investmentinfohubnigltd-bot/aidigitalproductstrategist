@@ -46,6 +46,15 @@ alter table public.strategist_checkouts enable row level security;
 alter table public.strategist_subscriptions enable row level security;
 alter table public.strategist_billing_events enable row level security;
 
+-- Explicit deny policies document that browser clients have no access. The
+-- service role bypasses RLS for the checkout and verified-webhook routes.
+drop policy if exists "no browser checkout access" on public.strategist_checkouts;
+create policy "no browser checkout access" on public.strategist_checkouts
+  for all to anon, authenticated using (false) with check (false);
+drop policy if exists "no browser billing event access" on public.strategist_billing_events;
+create policy "no browser billing event access" on public.strategist_billing_events
+  for all to anon, authenticated using (false) with check (false);
+
 drop policy if exists "own strategist subscription read" on public.strategist_subscriptions;
 create policy "own strategist subscription read" on public.strategist_subscriptions
   for select to authenticated using ((select auth.uid()) = user_id);
@@ -124,3 +133,22 @@ revoke all on function public.activate_strategist_subscription(text,text,integer
 revoke all on function public.process_strategist_subscription_event(text,text,text,text,text,timestamptz,boolean) from public, anon, authenticated;
 grant execute on function public.activate_strategist_subscription(text,text,integer,text,text,text,text,timestamptz,text) to service_role;
 grant execute on function public.process_strategist_subscription_event(text,text,text,text,text,timestamptz,boolean) to service_role;
+
+-- Existing service-only functions were created before explicit EXECUTE grants
+-- were part of the project standard. The trigger continues to work; the chat
+-- API calls ask_consume_message through its service-role client.
+revoke all on function public.ask_consume_message(uuid,integer) from public, anon, authenticated;
+grant execute on function public.ask_consume_message(uuid,integer) to service_role;
+revoke all on function public.handle_new_ask_user() from public, anon, authenticated;
+
+create index if not exists plan_waitlist_user_idx on public.plan_waitlist(user_id);
+
+drop policy if exists "own profile read" on public.profiles;
+create policy "own profile read" on public.profiles for select to authenticated
+  using ((select auth.uid()) = id);
+drop policy if exists "own messages read" on public.ask_messages;
+create policy "own messages read" on public.ask_messages for select to authenticated
+  using ((select auth.uid()) = user_id);
+drop policy if exists "own usage read" on public.ask_usage;
+create policy "own usage read" on public.ask_usage for select to authenticated
+  using ((select auth.uid()) = user_id);
