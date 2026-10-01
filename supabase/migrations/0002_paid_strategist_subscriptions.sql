@@ -142,6 +142,9 @@ grant execute on function public.ask_consume_message(uuid,integer) to service_ro
 revoke all on function public.handle_new_ask_user() from public, anon, authenticated;
 
 create index if not exists plan_waitlist_user_idx on public.plan_waitlist(user_id);
+drop policy if exists "no browser plan waitlist access" on public.plan_waitlist;
+create policy "no browser plan waitlist access" on public.plan_waitlist
+  for all to anon, authenticated using (false) with check (false);
 
 drop policy if exists "own profile read" on public.profiles;
 create policy "own profile read" on public.profiles for select to authenticated
