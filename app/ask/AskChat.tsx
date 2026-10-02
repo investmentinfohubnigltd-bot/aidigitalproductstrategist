@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import ScholarshipClaim from './ScholarshipClaim'
 import Link from 'next/link'
 import { createClient, type Session } from '@supabase/supabase-js'
 import { track } from '@vercel/analytics/react'
@@ -278,6 +279,7 @@ export default function AskChat() {
             <AssistantBubble text="" state="thinking" thinking />
           )}
 
+          <ScholarshipClaim session={session} />
           {paywall && <Paywall email={session?.user.email ?? null} />}
         </div>
       </div>
