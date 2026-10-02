@@ -10,7 +10,7 @@ const auth = createClient(
 type Scholarship = { name: string; status: string; claimedBy: string | null; claimedAt: string | null; accessUntil: string | null; claimBefore: string; months: number }
 type Paid = { email: string; plan: string; status: string; currentPeriodEnd: string | null; lastPaidAt: string | null; cancelAtPeriodEnd: boolean; messagesUsed: number }
 type Payment = { email: string; plan: string; status: string; amountNgn: number; createdAt: string }
-type Overview = { generatedAt: string; scholarships: Scholarship[]; paid: Paid[]; payments: Payment[]; academy: { status: string; detail: string; url: string } }
+type Overview = { generatedAt: string; alertsConfigured: boolean; scholarships: Scholarship[]; paid: Paid[]; payments: Payment[]; academy: { status: string; detail: string; url: string } }
 const date = (value: string | null) => value ? new Date(value).toLocaleString('en-NG', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Africa/Lagos' }) : '—'
 const money = (value: number) => new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(value)
 
@@ -69,6 +69,7 @@ export default function OwnerDashboard() {
           {data && <small>Updated {date(data.generatedAt)}</small>}
         </div>
         {data && <>
+          <p role="status" style={{ color: data.alertsConfigured ? '#b7d89a' : '#e4be78' }}>Email alerts: {data.alertsConfigured ? 'Configured for new scholarship activations' : 'Not configured — dashboard updates only'}</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12 }}>
             <Metric label="Invitations claimed" value={data.scholarships.filter(x => x.status === 'claimed').length} />
             <Metric label="Invitations available" value={data.scholarships.filter(x => x.status === 'available').length} />
