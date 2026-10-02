@@ -70,11 +70,29 @@ export async function POST(req: Request) {
     await supa.from('profiles').upsert({ id: user.id, tier: 'free' }, { onConflict: 'id', ignoreDuplicates: true })
     profile = { first_name: null, tier: 'free' }
   }
-  const tier: 'free' | 'builder' | 'founder' | 'founding50' = (profile.tier ?? 'free') as
+  let tier: 'free' | 'builder' | 'founder' | 'founding50' = (profile.tier ?? 'free') as
     | 'free'
     | 'builder'
     | 'founder'
     | 'founding50'
+
+  // Paid access always has a bounded period. This protects access even if a
+  // provider lifecycle event is delayed or missed.
+  if (tier !== 'free') {
+    const { data: subscription, error: subscriptionError } = await supa
+      .from('strategist_subscriptions')
+      .select('status, current_period_end')
+      .eq('user_id', user.id)
+      .maybeSingle()
+    if (subscriptionError) return jsonError('server_error', 500)
+    const periodEnd = subscription?.current_period_end ? new Date(subscription.current_period_end).getTime() : 0
+    const entitled = ['active', 'past_due', 'not_renewing'].includes(subscription?.status ?? '') &&
+      Number.isFinite(periodEnd) && periodEnd > Date.now()
+    if (!entitled) {
+      tier = 'free'
+      await supa.from('profiles').update({ tier: 'free' }).eq('id', user.id)
+    }
+  }
 
   // 4. Enforce usage limits server-side, before any model work.
   let messagesRemaining: number | undefined
