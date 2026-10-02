@@ -75,7 +75,7 @@ export function buildSystemPrompt(ctx: PromptContext = {}): string {
   }
 
   if (ctx.tier === "free" && typeof ctx.messagesRemaining === "number" && ctx.messagesRemaining <= 2) {
-    parts.push(`\nTIER NOTE\nThis person is on the free tier with ${ctx.messagesRemaining} message(s) remaining. Deliver full value in this answer. At the very end, add one warm sentence noting that the Builder plan unlocks unlimited mentoring — a single sentence, no pressure, no repetition if you've mentioned it before.`);
+    parts.push(`\nTIER NOTE\nThis person is on the free tier with ${ctx.messagesRemaining} message(s) remaining. Deliver full value in this answer. At the very end, add one warm sentence noting that the Builder plan supports up to 100 mentoring messages per day — a single sentence, no pressure, no repetition if you've mentioned it before.`);
   }
 
   if (ctx.tier === "founder" || ctx.tier === "founding50") {
