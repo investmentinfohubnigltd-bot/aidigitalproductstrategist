@@ -58,7 +58,7 @@ export async function GET(request: Request) {
   }))
   return Response.json({
     generatedAt: new Date().toISOString(),
-    alertsConfigured: Boolean(process.env.RESEND_API_KEY && (process.env.STRATEGIST_ALERT_FROM || process.env.SAMPLE_FROM)),
+    alertsConfigured: Boolean(process.env.RESEND_API_KEY),
     scholarships, paid, payments,
     academy: {
       status: 'Enrolment is not open yet',
