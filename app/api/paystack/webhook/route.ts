@@ -83,7 +83,16 @@ export async function POST(req: Request) {
       p_paid_at: text(data.paid_at) ?? text(data.paidAt),
       p_domain: text(data.domain),
     })
-    if (error) return new Response(null, { status: 500 })
+    if (error) {
+      // Provider recovery may have completed this exact checkout first.
+      const { data: paid, error: lookupError } = await supa.from('strategist_checkouts')
+        .select('status').eq('reference', reference).eq('amount_kobo', data.amount)
+        .eq('currency', text(data.currency) ?? '').eq('paystack_plan_code', planCode(data) ?? '')
+        .maybeSingle()
+      if (lookupError || paid?.status !== 'paid' || data.domain !== 'live') {
+        return new Response(null, { status: 500 })
+      }
+    }
   } else if (['subscription.create', 'subscription.disable', 'subscription.not_renew', 'invoice.update', 'invoice.payment_failed'].includes(eventType)) {
     const customer = object(data.customer)
     const subscription = object(data.subscription)

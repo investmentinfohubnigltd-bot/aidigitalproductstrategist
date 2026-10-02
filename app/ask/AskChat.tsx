@@ -84,7 +84,15 @@ export default function AskChat() {
       attempts -= 1
       if (attempts > 0) window.setTimeout(check, 2000)
     }
-    void check()
+    const start = async () => {
+      if (new URLSearchParams(window.location.search).get('billing') === 'return') {
+        await fetch('/api/ask/reconcile', {
+          method: 'POST', headers: { Authorization: `Bearer ${session.access_token}` },
+        }).catch(() => null)
+      }
+      if (!cancelled) await check()
+    }
+    void start()
     return () => { cancelled = true }
   }, [session])
 
@@ -611,6 +619,25 @@ function ManageBilling({ session }: { session: Session }) {
 
 // ── paywall / plans ─────────────────────────────────────────────
 function Paywall({ email }: { email: string | null }) {
+  const [checking, setChecking] = useState(false)
+  const recover = async () => {
+    setChecking(true)
+    setError(null)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) { setError('Sign in again to check your payment.'); return }
+      const res = await fetch('/api/ask/reconcile', {
+        method: 'POST', headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      const body = await res.json().catch(() => null)
+      if (res.ok && body?.activated) { window.location.reload(); return }
+      setError(body?.error === 'no_pending_payment' || body?.error === 'payment_pending'
+        ? 'No successful payment was found yet. If you just paid, try again shortly.'
+        : 'Your payment could not be confirmed yet. Please try again shortly or contact support. Do not pay again.')
+    } catch {
+      setError('Payment checking is temporarily unavailable. Please try again shortly. Do not pay again.')
+    } finally { setChecking(false) }
+  }
   const [pending, setPending] = useState<PaidPlanId | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -716,6 +743,10 @@ function Paywall({ email }: { email: string | null }) {
           </div>
         ))}
       </div>
+      <button onClick={recover} disabled={checking || pending !== null}
+        style={{ display: 'block', margin: '18px auto 0', padding: '10px 16px', borderRadius: 10, border: '1px solid var(--rule)', background: 'var(--surface)', color: 'var(--parchment)', cursor: 'pointer' }}>
+        {checking ? 'Checking payment…' : 'Already paid? Check payment'}
+      </button>
       {error && <p role="alert" style={{ margin: '16px auto 0', maxWidth: 480, textAlign: 'center', fontSize: '13px', color: '#e5a38f' }}>{error}</p>}
       <p style={{ margin: '18px auto 0', maxWidth: 440, textAlign: 'center', fontSize: '12px', lineHeight: 1.6, color: 'var(--tertiary)' }}>
         Secure recurring billing through Paystack. Fair use: up to 100 messages per day.
