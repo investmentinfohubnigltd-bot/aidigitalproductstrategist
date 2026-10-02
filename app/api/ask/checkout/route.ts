@@ -88,8 +88,12 @@ export async function POST(req: Request) {
     })
     const body = await response.json().catch(() => null) as { status?: boolean; data?: { authorization_url?: string } } | null
     const url = body?.data?.authorization_url
-    if (!response.ok || !body?.status || !url || new URL(url).protocol !== 'https:') throw new Error('checkout failed')
-    return Response.json({ url })
+    if (!response.ok || !body?.status || !url) throw new Error('checkout failed')
+    const checkoutUrl = new URL(url)
+    if (checkoutUrl.protocol !== 'https:' || (checkoutUrl.hostname !== 'paystack.com' && !checkoutUrl.hostname.endsWith('.paystack.com'))) {
+      throw new Error('checkout failed')
+    }
+    return Response.json({ url: checkoutUrl.toString() })
   } catch {
     await supa.from('strategist_checkouts').update({ status: 'failed', updated_at: new Date().toISOString() }).eq('reference', reference)
     return Response.json({ error: 'checkout_failed' }, { status: 502 })
