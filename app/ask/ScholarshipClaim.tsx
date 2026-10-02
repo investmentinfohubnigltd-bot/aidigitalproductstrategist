@@ -13,7 +13,10 @@ export default function ScholarshipClaim({ session }: { session: Session | null 
      window.history.replaceState(null,'',window.location.pathname+window.location.search)
    }
    const saved=localStorage.getItem('strategist-scholarship')
-   if(saved && /^[a-f0-9]{64}$/.test(saved)) setToken(saved)
+   const frame = window.requestAnimationFrame(() => {
+     if(saved && /^[a-f0-9]{64}$/.test(saved)) setToken(saved)
+   })
+   return () => window.cancelAnimationFrame(frame)
  },[])
  if(!token) return null
  const activate=async()=>{
