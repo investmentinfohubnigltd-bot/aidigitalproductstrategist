@@ -45,16 +45,18 @@ export default function AskChat() {
       setSession(data.session)
       setAuthReady(true)
     })
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s))
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+      setSession(s)
+      if (!s) {
+        setRemaining(null)
+        setPaywall(false)
+      }
+    })
     return () => sub.subscription.unsubscribe()
   }, [])
 
   useEffect(() => {
-    if (!session) {
-      setRemaining(null)
-      setPaywall(false)
-      return
-    }
+    if (!session) return
     let cancelled = false
     let attempts = new URLSearchParams(window.location.search).get('billing') === 'return' ? 5 : 1
     const check = async () => {
@@ -84,7 +86,7 @@ export default function AskChat() {
     }
     void check()
     return () => { cancelled = true }
-  }, [session?.access_token])
+  }, [session])
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
