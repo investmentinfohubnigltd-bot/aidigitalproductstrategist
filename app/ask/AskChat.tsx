@@ -45,9 +45,48 @@ export default function AskChat() {
       setSession(data.session)
       setAuthReady(true)
     })
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s))
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+      setSession(s)
+      if (!s) {
+        setRemaining(null)
+        setPaywall(false)
+      }
+    })
     return () => sub.subscription.unsubscribe()
   }, [])
+
+  useEffect(() => {
+    if (!session) return
+    let cancelled = false
+    let attempts = new URLSearchParams(window.location.search).get('billing') === 'return' ? 5 : 1
+    const check = async () => {
+      const res = await fetch('/api/ask/subscription', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        cache: 'no-store',
+      }).catch(() => null)
+      const body = res?.ok ? await res.json().catch(() => null) as {
+        freeRemaining?: number
+        subscription?: { status?: string; currentPeriodEnd?: string } | null
+      } | null : null
+      if (cancelled) return
+      const paid = body?.subscription &&
+        ['active', 'past_due', 'not_renewing'].includes(body.subscription.status ?? '') &&
+        new Date(body.subscription.currentPeriodEnd ?? '').getTime() > Date.now()
+      if (paid) {
+        setRemaining(null)
+        setPaywall(false)
+        return
+      }
+      if (typeof body?.freeRemaining === 'number') {
+        setRemaining(body.freeRemaining)
+        setPaywall(body.freeRemaining === 0)
+      }
+      attempts -= 1
+      if (attempts > 0) window.setTimeout(check, 2000)
+    }
+    void check()
+    return () => { cancelled = true }
+  }, [session])
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
@@ -627,7 +666,7 @@ function Paywall({ email }: { email: string | null }) {
         Continue with the Strategist
       </h2>
       <p style={{ margin: '10px auto 24px', maxWidth: 480, textAlign: 'center', fontSize: '14px', lineHeight: 1.6, color: 'var(--secondary)' }}>
-        You&rsquo;ve completed your five free messages. Choose a monthly coaching plan to continue.
+        You&rsquo;ve used the five free messages on this account across visits. Choose a monthly coaching plan to continue.
         {email ? ` Checkout will use ${email}.` : ''}
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
