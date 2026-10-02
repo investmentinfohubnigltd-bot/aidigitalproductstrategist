@@ -48,7 +48,7 @@ export default function OwnerDashboard() {
     const { error } = await auth.auth.signInWithOtp({
       email: address, options: { emailRedirectTo: `${window.location.origin}/admin`, shouldCreateUser: false },
     })
-    if (error) setNotice('Could not send a sign-in link. Use your existing Strategist account.')
+    if (error) setNotice('This address could not sign in. Use the email on your existing Ask the Strategist account—the company inbox is not automatically an owner account.')
     else setSent(true)
   }
   return <main style={{ minHeight: '100vh', background: '#1c1a16', color: '#eee9dd', padding: '36px 20px', fontFamily: 'Arial, sans-serif' }}>
@@ -58,7 +58,7 @@ export default function OwnerDashboard() {
         {session && <button onClick={() => auth.auth.signOut()} style={button}>Sign out</button>}
       </header>
       {!ready ? <p>Checking sign-in…</p> : !session ? <section style={panel}>
-        <h2>Sign in as owner</h2><p>Use the email associated with your existing Ask the Strategist account.</p>
+        <h2>Sign in as owner</h2><p>Use the same personal email you already used for Ask the Strategist. A company inbox is not automatically an owner account.</p>
         {sent ? <p>Check your inbox for your secure sign-in link.</p> : <form onSubmit={event => { event.preventDefault(); void signIn() }} style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <input type="email" required autoComplete="email" value={email} onChange={event => setEmail(event.target.value)} placeholder="Owner email" style={{ ...button, minWidth: 250, background: '#322f29', color: '#fff' }} />
           <button type="submit" style={button}>Email sign-in link</button>
