@@ -16,9 +16,6 @@ create function public.claim_strategist_scholarship(p_token_hash text,p_user_id 
 returns jsonb language plpgsql security invoker set search_path='' as $$
 declare v public.strategist_scholarships%rowtype;
 begin
- if not exists(select 1 from auth.users where id=p_user_id and email_confirmed_at is not null) then
-   return jsonb_build_object('error','verified_account_required');
- end if;
  select * into v from public.strategist_scholarships where token_hash=p_token_hash for update;
  if not found or v.revoked_at is not null then return jsonb_build_object('error','invalid_invitation'); end if;
  if v.claimed_at is not null then
