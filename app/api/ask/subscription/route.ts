@@ -13,15 +13,23 @@ async function currentSubscription(req: Request) {
     .eq('user_id', user.id)
     .maybeSingle()
   if (error) return { error: Response.json({ error: 'billing_unavailable' }, { status: 503 }) }
-  return { data }
+  return { data, user, supa }
 }
 
 export async function GET(req: Request) {
   const result = await currentSubscription(req)
   if ('error' in result) return result.error
   const subscription = result.data
-  if (!subscription) return Response.json({ subscription: null })
+  const { data: usage, error: usageError } = await result.supa
+    .from('ask_usage')
+    .select('message_count')
+    .eq('user_id', result.user.id)
+    .maybeSingle()
+  if (usageError) return Response.json({ error: 'billing_unavailable' }, { status: 503 })
+  const freeRemaining = Math.max(0, 5 - (usage?.message_count ?? 0))
+  if (!subscription) return Response.json({ subscription: null, freeRemaining })
   return Response.json({
+    freeRemaining,
     subscription: {
       plan: subscription.plan,
       status: subscription.status,
