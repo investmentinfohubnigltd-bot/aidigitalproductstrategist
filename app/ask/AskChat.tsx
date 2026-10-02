@@ -43,10 +43,18 @@ export default function AskChat() {
   // Auth lifecycle (magic-link session is picked up from the URL on redirect).
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
+      if (data.session?.user.email?.toLowerCase() === 'hello@aidigitalproductstrategist.com') {
+        window.location.replace('/admin')
+        return
+      }
       setSession(data.session)
       setAuthReady(true)
     })
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+      if (s?.user.email?.toLowerCase() === 'hello@aidigitalproductstrategist.com') {
+        window.location.replace('/admin')
+        return
+      }
       setSession(s)
       if (!s) {
         setRemaining(null)
