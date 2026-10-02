@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { createClient, type Session } from '@supabase/supabase-js'
 import { track } from '@vercel/analytics/react'
 import StrategistAvatar, { type StrategistState } from '@/components/StrategistAvatar'
+import { PAID_PLANS, type PaidPlanId } from '@/lib/strategist-plans'
 
 // Browser client (anon key). Auth only — all data access goes through /api/ask.
 const supabase = createClient(
@@ -15,20 +16,6 @@ const supabase = createClient(
 const SERIF = "var(--font-serif)"
 
 type Msg = { role: 'user' | 'assistant'; content: string }
-
-type Plan = {
-  id: 'builder' | 'founder' | 'founding50'
-  name: string
-  price: string
-  cadence: string
-  note?: string
-}
-
-const PLANS: Plan[] = [
-  { id: 'builder', name: 'Builder', price: '₦10,000', cadence: '/month', note: 'Unlimited mentoring.' },
-  { id: 'founder', name: 'Founder', price: '₦25,000', cadence: '/month', note: 'Deeper frameworks, sharper trade-offs.' },
-  { id: 'founding50', name: 'Founding 100', price: '₦7,500', cadence: '/month — for life', note: 'Limited to the first 100 members.' },
-]
 
 const STARTERS = [
   'How do I price a new product for the Nigerian market?',
@@ -209,18 +196,20 @@ export default function AskChat() {
         >
           Ask the Strategist
         </span>
-        <span
-          style={{
-            fontSize: '10px',
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: remaining === 0 ? 'var(--gold)' : 'var(--tertiary)',
-            minWidth: 64,
-            textAlign: 'right',
-          }}
-        >
-          {remaining === null ? '' : remaining > 0 ? `${remaining} free left` : 'Free used'}
-        </span>
+        <div style={{ minWidth: 90, textAlign: 'right' }}>
+          <span
+            style={{
+              display: 'block',
+              fontSize: '10px',
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: remaining === 0 ? 'var(--gold)' : 'var(--tertiary)',
+            }}
+          >
+            {remaining === null ? '' : remaining > 0 ? `${remaining} free left` : 'Free used'}
+          </span>
+          {session && <ManageBilling session={session} />}
+        </div>
       </header>
 
       {/* ── conversation ─────────────────────────────────────── */}
@@ -521,32 +510,104 @@ function AuthPanel({
   )
 }
 
+function ManageBilling({ session }: { session: Session }) {
+  const [manageable, setManageable] = useState(false)
+  const [opening, setOpening] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    const returning = new URLSearchParams(window.location.search).get('billing') === 'return'
+    let attempts = returning ? 5 : 1
+    const check = async () => {
+      const res = await fetch('/api/ask/subscription', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        cache: 'no-store',
+      }).catch(() => null)
+      const body = res ? await res.json().catch(() => null) as { subscription?: { manageable?: boolean } } | null : null
+      if (!cancelled && body?.subscription?.manageable) {
+        setManageable(true)
+        return
+      }
+      attempts -= 1
+      if (!cancelled && attempts > 0) window.setTimeout(check, 2000)
+    }
+    void check()
+    return () => { cancelled = true }
+  }, [session.access_token])
+
+  if (!manageable) return null
+  const open = async () => {
+    setOpening(true)
+    try {
+      const res = await fetch('/api/ask/subscription', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      const body = await res.json().catch(() => null) as { url?: string } | null
+      if (res.ok && body?.url) window.location.assign(body.url)
+    } finally {
+      setOpening(false)
+    }
+  }
+  return (
+    <button
+      type="button"
+      onClick={open}
+      disabled={opening}
+      style={{
+        border: 0,
+        padding: 0,
+        marginTop: 4,
+        background: 'transparent',
+        color: 'var(--gold)',
+        font: 'inherit',
+        fontSize: '10px',
+        cursor: opening ? 'wait' : 'pointer',
+      }}
+    >
+      {opening ? 'Opening…' : 'Manage plan'}
+    </button>
+  )
+}
+
 // ── paywall / plans ─────────────────────────────────────────────
 function Paywall({ email }: { email: string | null }) {
-  const [joined, setJoined] = useState<string | null>(null)
-  const [pending, setPending] = useState<string | null>(null)
+  const [pending, setPending] = useState<PaidPlanId | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
-  // The Paywall only mounts once the free limit is reached — track that here.
   useEffect(() => {
     track('free_limit_hit')
   }, [])
 
-  const join = async (plan: Plan['id']) => {
-    track('waitlist_join', { plan })
+  const subscribe = async (plan: PaidPlanId) => {
+    track('checkout_started', { plan })
     setPending(plan)
+    setError(null)
     try {
       const {
         data: { session },
       } = await supabase.auth.getSession()
-      const res = await fetch('/api/ask/waitlist', {
+      if (!session) {
+        setError('Your session has expired. Sign in again to subscribe.')
+        return
+      }
+      const academySource = new URLSearchParams(window.location.search).get('source') === 'academy'
+      const res = await fetch(`/api/ask/checkout${academySource ? '?source=academy' : ''}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(session ? { Authorization: `Bearer ${session.access_token}` } : {}),
-        },
-        body: JSON.stringify({ plan, email }),
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ plan }),
       })
-      if (res.ok) setJoined(plan)
+      const body = (await res.json().catch(() => null)) as { url?: string; error?: string } | null
+      if (res.ok && body?.url) {
+        window.location.assign(body.url)
+        return
+      }
+      const messages: Record<string, string> = {
+        already_subscribed: 'This account already has a paid plan.',
+        founding_offer_full: 'The Founding 100 offer is full. Choose Builder or Founder.',
+        billing_unavailable: 'Subscriptions are temporarily unavailable. Please try again shortly.',
+      }
+      setError(messages[body?.error ?? ''] ?? 'Checkout could not be started. Please try again.')
     } finally {
       setPending(null)
     }
@@ -563,13 +624,14 @@ function Paywall({ email }: { email: string | null }) {
       }}
     >
       <h2 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '26px', textAlign: 'center' }}>
-        You&rsquo;ve used your 5 free messages
+        Continue with the Strategist
       </h2>
-      <p style={{ margin: '10px auto 24px', maxWidth: 440, textAlign: 'center', fontSize: '14px', lineHeight: 1.6, color: 'var(--secondary)' }}>
-        Paid plans aren&rsquo;t live yet. Join the waitlist and I&rsquo;ll let you know the moment mentoring opens up.
+      <p style={{ margin: '10px auto 24px', maxWidth: 480, textAlign: 'center', fontSize: '14px', lineHeight: 1.6, color: 'var(--secondary)' }}>
+        You&rsquo;ve completed your five free messages. Choose a monthly coaching plan to continue.
+        {email ? ` Checkout will use ${email}.` : ''}
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {PLANS.map((p) => (
+        {PAID_PLANS.map((p) => (
           <div
             key={p.id}
             style={{
@@ -589,33 +651,35 @@ function Paywall({ email }: { email: string | null }) {
                 <span style={{ fontSize: '15px', color: 'var(--gold)', fontWeight: 500 }}>{p.price}</span>
                 <span style={{ fontSize: '11px', color: 'var(--tertiary)' }}>{p.cadence}</span>
               </div>
-              {p.note && <div style={{ marginTop: 3, fontSize: '12px', color: 'var(--tertiary)' }}>{p.note}</div>}
+              <div style={{ marginTop: 3, fontSize: '12px', color: 'var(--tertiary)' }}>{p.note}</div>
             </div>
             <button
-              onClick={() => join(p.id)}
-              disabled={joined === p.id || pending === p.id}
+              onClick={() => subscribe(p.id)}
+              disabled={pending !== null}
               style={{
                 flexShrink: 0,
                 padding: '10px 16px',
                 borderRadius: 10,
                 border: '1px solid var(--gold-dim)',
-                background: joined === p.id ? 'transparent' : 'var(--gold)',
-                color: joined === p.id ? 'var(--gold)' : 'var(--ink)',
+                background: 'var(--gold)',
+                color: 'var(--ink)',
                 fontSize: '10px',
                 fontWeight: 600,
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
-                cursor: joined === p.id ? 'default' : 'pointer',
+                cursor: pending ? 'wait' : 'pointer',
                 whiteSpace: 'nowrap',
+                opacity: pending && pending !== p.id ? 0.55 : 1,
               }}
             >
-              {joined === p.id ? "You're in" : pending === p.id ? '…' : 'Join the waitlist'}
+              {pending === p.id ? 'Opening…' : 'Subscribe'}
             </button>
           </div>
         ))}
       </div>
+      {error && <p role="alert" style={{ margin: '16px auto 0', maxWidth: 480, textAlign: 'center', fontSize: '13px', color: '#e5a38f' }}>{error}</p>}
       <p style={{ margin: '18px auto 0', maxWidth: 440, textAlign: 'center', fontSize: '12px', lineHeight: 1.6, color: 'var(--tertiary)' }}>
-        Fair use: up to 100 messages per day on all paid plans.
+        Secure recurring billing through Paystack. Fair use: up to 100 messages per day.
       </p>
     </div>
   )
