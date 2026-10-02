@@ -196,18 +196,20 @@ export default function AskChat() {
         >
           Ask the Strategist
         </span>
-        <span
-          style={{
-            fontSize: '10px',
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: remaining === 0 ? 'var(--gold)' : 'var(--tertiary)',
-            minWidth: 64,
-            textAlign: 'right',
-          }}
-        >
-          {remaining === null ? '' : remaining > 0 ? `${remaining} free left` : 'Free used'}
-        </span>
+        <div style={{ minWidth: 90, textAlign: 'right' }}>
+          <span
+            style={{
+              display: 'block',
+              fontSize: '10px',
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: remaining === 0 ? 'var(--gold)' : 'var(--tertiary)',
+            }}
+          >
+            {remaining === null ? '' : remaining > 0 ? `${remaining} free left` : 'Free used'}
+          </span>
+          {session && <ManageBilling session={session} />}
+        </div>
       </header>
 
       {/* ── conversation ─────────────────────────────────────── */}
@@ -505,6 +507,66 @@ function AuthPanel({
         Magic link
       </button>
     </div>
+  )
+}
+
+function ManageBilling({ session }: { session: Session }) {
+  const [manageable, setManageable] = useState(false)
+  const [opening, setOpening] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    const returning = new URLSearchParams(window.location.search).get('billing') === 'return'
+    let attempts = returning ? 5 : 1
+    const check = async () => {
+      const res = await fetch('/api/ask/subscription', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        cache: 'no-store',
+      }).catch(() => null)
+      const body = res ? await res.json().catch(() => null) as { subscription?: { manageable?: boolean } } | null : null
+      if (!cancelled && body?.subscription?.manageable) {
+        setManageable(true)
+        return
+      }
+      attempts -= 1
+      if (!cancelled && attempts > 0) window.setTimeout(check, 2000)
+    }
+    void check()
+    return () => { cancelled = true }
+  }, [session.access_token])
+
+  if (!manageable) return null
+  const open = async () => {
+    setOpening(true)
+    try {
+      const res = await fetch('/api/ask/subscription', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      const body = await res.json().catch(() => null) as { url?: string } | null
+      if (res.ok && body?.url) window.location.assign(body.url)
+    } finally {
+      setOpening(false)
+    }
+  }
+  return (
+    <button
+      type="button"
+      onClick={open}
+      disabled={opening}
+      style={{
+        border: 0,
+        padding: 0,
+        marginTop: 4,
+        background: 'transparent',
+        color: 'var(--gold)',
+        font: 'inherit',
+        fontSize: '10px',
+        cursor: opening ? 'wait' : 'pointer',
+      }}
+    >
+      {opening ? 'Opening…' : 'Manage plan'}
+    </button>
   )
 }
 
