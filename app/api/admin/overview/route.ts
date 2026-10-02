@@ -3,15 +3,12 @@ import { createServiceClient, getUserFromRequest } from '@/lib/ask-supabase'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const ownerIds = new Set([
-  'f15b629c-31af-4426-aeee-191b4eb0aad2',
-  '391d5900-f57e-4186-a999-830053d10bdd',
-])
+const ownerEmail = 'hello@aidigitalproductstrategist.com'
 
 export async function GET(request: Request) {
   const user = await getUserFromRequest(request)
   if (!user) return Response.json({ error: 'Sign in to continue.' }, { status: 401 })
-  if (!user.email_confirmed_at || !ownerIds.has(user.id)) {
+  if (!user.email_confirmed_at || user.email?.toLowerCase() !== ownerEmail) {
     return Response.json({ error: 'Owner access required.' }, { status: 403 })
   }
 
