@@ -18,7 +18,7 @@ export async function POST(req: Request) {
    const { data: invitation } = await db.from('strategist_scholarships')
      .select('recipient_name,access_until').eq('token_hash',tokenHash).maybeSingle()
    const key=process.env.RESEND_API_KEY
-   const from=process.env.STRATEGIST_ALERT_FROM || process.env.SAMPLE_FROM
+   const from=process.env.STRATEGIST_ALERT_FROM || 'Ask the Strategist <notifications@aidigitalproductstrategist.com>'
    if (key && from && invitation) {
      try {
        const response=await fetch('https://api.resend.com/emails',{
