@@ -1,3 +1,4 @@
+import { scholarshipAccess } from '@/lib/strategist-scholarship'
 import Anthropic from '@anthropic-ai/sdk'
 import { buildSystemPrompt } from '@/lib/strategist-system-prompt'
 import { createServiceClient, getUserFromRequest } from '@/lib/ask-supabase'
@@ -92,6 +93,11 @@ export async function POST(req: Request) {
       tier = 'free'
       await supa.from('profiles').update({ tier: 'free' }).eq('id', user.id)
     }
+  }
+
+  if (tier === 'free') {
+    try { if (await scholarshipAccess(user.id)) tier = 'builder' }
+    catch { return jsonError('server_error', 503) }
   }
 
   // 4. Enforce usage limits server-side, before any model work.
