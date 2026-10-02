@@ -1,3 +1,4 @@
+import { scholarshipAccess } from '@/lib/strategist-scholarship'
 import { createServiceClient, getUserFromRequest } from '@/lib/ask-supabase'
 import { paystackSecret } from '@/lib/strategist-billing'
 
@@ -27,6 +28,16 @@ export async function GET(req: Request) {
     .maybeSingle()
   if (usageError) return Response.json({ error: 'billing_unavailable' }, { status: 503 })
   const freeRemaining = Math.max(0, 5 - (usage?.message_count ?? 0))
+  if (!subscription || !['active', 'past_due', 'not_renewing'].includes(subscription.status) ||
+      new Date(subscription.current_period_end ?? '').getTime() <= Date.now()) {
+    try {
+      const accessUntil = await scholarshipAccess(result.user.id)
+      if (accessUntil) return Response.json({ freeRemaining, subscription: {
+        plan: 'builder', status: 'active', currentPeriodEnd: accessUntil,
+        cancelAtPeriodEnd: true, manageable: false, scholarship: true,
+      } })
+    } catch { return Response.json({ error: 'billing_unavailable' }, { status: 503 }) }
+  }
   if (!subscription) return Response.json({ subscription: null, freeRemaining })
   return Response.json({
     freeRemaining,
