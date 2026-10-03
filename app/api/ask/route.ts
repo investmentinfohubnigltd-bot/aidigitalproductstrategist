@@ -16,6 +16,66 @@ const DAILY_CAP_MESSAGE =
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string }
 
+async function* streamOpenAI(messages: ChatMessage[], instructions: string): AsyncGenerator<string> {
+  const response = await fetch('https://api.openai.com/v1/responses', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: process.env.STRATEGIST_OPENAI_MODEL || 'gpt-6-luna',
+      instructions,
+      input: messages,
+      max_output_tokens: 1024,
+      reasoning: { effort: 'none' },
+      stream: true,
+      store: false,
+    }),
+  })
+  if (!response.ok || !response.body) {
+    throw new Error(`OpenAI request failed: ${response.status}`)
+  }
+
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  let completed = false
+
+  function* parseFrame(frame: string): Generator<string> {
+    const data = frame.split('\n')
+      .filter((line) => line.startsWith('data:'))
+      .map((line) => line.slice(5).trimStart())
+      .join('\n')
+    if (!data || data === '[DONE]') return
+    const event = JSON.parse(data) as { type?: string; delta?: string }
+    if (event.type === 'response.output_text.delta' && typeof event.delta === 'string') yield event.delta
+    if (event.type === 'response.completed') completed = true
+    if (event.type === 'response.failed' || event.type === 'response.incomplete' || event.type === 'error') {
+      throw new Error(`OpenAI stream ended with ${event.type}`)
+    }
+  }
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read()
+      buffer = (buffer + decoder.decode(value, { stream: !done })).replace(/\r\n/g, '\n')
+      let boundary: number
+      while ((boundary = buffer.indexOf('\n\n')) !== -1) {
+        const frame = buffer.slice(0, boundary)
+        buffer = buffer.slice(boundary + 2)
+        yield* parseFrame(frame)
+      }
+      if (done) break
+    }
+    if (buffer.trim()) yield* parseFrame(buffer)
+    if (!completed) throw new Error('OpenAI stream ended before completion')
+  } finally {
+    reader.releaseLock()
+  }
+}
+
+
 function jsonError(error: string, status: number, extra: Record<string, unknown> = {}) {
   return Response.json({ error, ...extra }, { status })
 }
@@ -150,17 +210,18 @@ export async function POST(req: Request) {
     userName: profile.first_name ?? undefined,
   })
 
-  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
-  const modelStream = anthropic.messages.stream({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 1024,
-    system,
-    // Snappy chat: thinking off, low effort keeps latency and cost down.
-    thinking: { type: 'disabled' },
-    output_config: { effort: 'low' },
-    messages: messages.map((m) => ({ role: m.role, content: m.content })),
-  })
+  // Activate OpenAI when its server-side key is configured. Keep the existing
+  // provider available during migration so production chat stays online.
+  const modelStream = process.env.OPENAI_API_KEY
+    ? streamOpenAI(messages, system)
+    : new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }).messages.stream({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1024,
+        system,
+        thinking: { type: 'disabled' },
+        output_config: { effort: 'low' },
+        messages: messages.map((m) => ({ role: m.role, content: m.content })),
+      })
 
   const encoder = new TextEncoder()
   let assistantText = ''
@@ -168,10 +229,15 @@ export async function POST(req: Request) {
   const readable = new ReadableStream<Uint8Array>({
     async start(controller) {
       try {
-        for await (const event of modelStream) {
-          if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
-            assistantText += event.delta.text
-            controller.enqueue(encoder.encode(event.delta.text))
+        for await (const chunk of modelStream) {
+          const delta = typeof chunk === 'string'
+            ? chunk
+            : chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta'
+              ? chunk.delta.text
+              : ''
+          if (delta) {
+            assistantText += delta
+            controller.enqueue(encoder.encode(delta))
           }
         }
         if (assistantText) {

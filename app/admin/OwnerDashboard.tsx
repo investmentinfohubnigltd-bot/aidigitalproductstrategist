@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { createClient, type Session } from '@supabase/supabase-js'
+import Link from 'next/link'
 
 const auth = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://placeholder.supabase.co',
@@ -23,11 +24,6 @@ export default function OwnerDashboard() {
   const [data, setData] = useState<Overview | null>(null)
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    auth.auth.getSession().then(({ data }) => { setSession(data.session); setReady(true) })
-    const { data: listener } = auth.auth.onAuthStateChange((_event, next) => setSession(next))
-    return () => listener.subscription.unsubscribe()
-  }, [])
   const refresh = useCallback(async (current: Session) => {
     setLoading(true)
     try {
@@ -40,7 +36,19 @@ export default function OwnerDashboard() {
     } catch { setNotice('Could not load the dashboard. Please retry.') }
     finally { setLoading(false) }
   }, [])
-  useEffect(() => { if (session) void refresh(session); else setData(null) }, [session, refresh])
+  useEffect(() => {
+    auth.auth.getSession().then(({ data }) => {
+      setSession(data.session)
+      setReady(true)
+      if (data.session) void refresh(data.session)
+    })
+    const { data: listener } = auth.auth.onAuthStateChange((_event, next) => {
+      setData(null)
+      setSession(next)
+      if (next) void refresh(next)
+    })
+    return () => listener.subscription.unsubscribe()
+  }, [refresh])
   async function signIn() {
     setNotice('')
     const address = email.trim().toLowerCase()
@@ -54,7 +62,7 @@ export default function OwnerDashboard() {
   return <main style={{ minHeight: '100vh', background: '#1c1a16', color: '#eee9dd', padding: '36px 20px', fontFamily: 'Arial, sans-serif' }}>
     <div style={{ maxWidth: 1100, margin: 'auto' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <div><a href="/" style={{ color: '#c8a96b' }}>← Aurum</a><h1 style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(30px,5vw,48px)', fontWeight: 400, margin: '16px 0 4px' }}>Owner dashboard</h1><p style={{ color: '#bcb5a6' }}>Academy and Ask the Strategist</p></div>
+        <div><Link href="/" style={{ color: '#c8a96b' }}>← Aurum</Link><h1 style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(30px,5vw,48px)', fontWeight: 400, margin: '16px 0 4px' }}>Owner dashboard</h1><p style={{ color: '#bcb5a6' }}>Academy and Ask the Strategist</p></div>
         {session && <button onClick={() => auth.auth.signOut()} style={button}>Sign out</button>}
       </header>
       {!ready ? <p>Checking sign-in…</p> : !session ? <section style={panel}>
@@ -73,7 +81,7 @@ export default function OwnerDashboard() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12 }}>
             <Metric label="Invitations claimed" value={data.scholarships.filter(x => x.status === 'claimed').length} />
             <Metric label="Invitations available" value={data.scholarships.filter(x => x.status === 'available').length} />
-            <Metric label="Paid subscribers" value={data.paid.filter(x => ['active','past_due','not_renewing'].includes(x.status) && new Date(x.currentPeriodEnd ?? 0).getTime() > Date.now()).length} />
+            <Metric label="Paid subscribers" value={data.paid.filter(x => ['active','past_due','not_renewing'].includes(x.status) && new Date(x.currentPeriodEnd ?? 0).getTime() > new Date(data.generatedAt).getTime()).length} />
             <Metric label="Academy enrolments" value="Not open" />
           </div>
           <section style={panel}><h2>Scholarship activations</h2><p>First confirmed activation claims each link. Times shown in Lagos time.</p>
