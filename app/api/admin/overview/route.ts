@@ -59,6 +59,8 @@ export async function GET(request: Request) {
   return Response.json({
     generatedAt: new Date().toISOString(),
     alertsConfigured: Boolean(process.env.RESEND_API_KEY),
+    aiProvider: process.env.OPENAI_API_KEY ? 'OpenAI' : 'Anthropic',
+    aiModel: process.env.OPENAI_API_KEY ? (process.env.STRATEGIST_OPENAI_MODEL || 'gpt-6-luna') : 'claude-sonnet-4-6',
     scholarships, paid, payments,
     academy: {
       status: 'Enrolment is not open yet',
