@@ -24,11 +24,6 @@ export default function OwnerDashboard() {
   const [data, setData] = useState<Overview | null>(null)
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    auth.auth.getSession().then(({ data }) => { setSession(data.session); setReady(true) })
-    const { data: listener } = auth.auth.onAuthStateChange((_event, next) => { setData(null); setSession(next) })
-    return () => listener.subscription.unsubscribe()
-  }, [])
   const refresh = useCallback(async (current: Session) => {
     setLoading(true)
     try {
@@ -41,7 +36,19 @@ export default function OwnerDashboard() {
     } catch { setNotice('Could not load the dashboard. Please retry.') }
     finally { setLoading(false) }
   }, [])
-  useEffect(() => { if (session) void refresh(session) }, [session, refresh])
+  useEffect(() => {
+    auth.auth.getSession().then(({ data }) => {
+      setSession(data.session)
+      setReady(true)
+      if (data.session) void refresh(data.session)
+    })
+    const { data: listener } = auth.auth.onAuthStateChange((_event, next) => {
+      setData(null)
+      setSession(next)
+      if (next) void refresh(next)
+    })
+    return () => listener.subscription.unsubscribe()
+  }, [refresh])
   async function signIn() {
     setNotice('')
     const address = email.trim().toLowerCase()
